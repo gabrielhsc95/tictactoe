@@ -23,7 +23,9 @@ struct Field {
 
 impl Field {
     fn to_string(&self) {
+        println!("  0 1 2 x");
         for (row_index, row) in self.matrix.iter().enumerate() {
+            print!("{} ", row_index);
             for (col_index, element) in row.iter().enumerate() {
                 match element {
                     Some(p) => print!("{}", p.to_string()),
@@ -34,10 +36,10 @@ impl Field {
                 }
             }
             if row_index != 2 {
-                println!("\n-----");
+                println!("\n  -----");
             }
         }
-        println!();
+        println!("\ny");
     }
 
     fn is_valid(&self, c: &Coordinates) -> bool {
