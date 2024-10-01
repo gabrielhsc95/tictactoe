@@ -17,26 +17,46 @@ impl Player {
 
 struct Coordinates(usize, usize);
 
-fn clear_screen() {
-    print!("\x1B[2J\x1B[1;1H");
+struct Field {
+    matrix: [[Option<Player>; 3]; 3],
 }
 
-fn print_field(field: &[[Option<Player>; 3]; 3]) {
-    for (row_index, row) in field.iter().enumerate() {
-        for (col_index, element) in row.iter().enumerate() {
-            match element {
-                Some(p) => print!("{}", p.to_string()),
-                None => print!(" "),
+impl Field {
+    fn to_string(&self) {
+        for (row_index, row) in self.matrix.iter().enumerate() {
+            for (col_index, element) in row.iter().enumerate() {
+                match element {
+                    Some(p) => print!("{}", p.to_string()),
+                    None => print!(" "),
+                }
+                if col_index != 2 {
+                    print!("|");
+                }
             }
-            if col_index != 2 {
-                print!("|");
+            if row_index != 2 {
+                println!("\n-----");
             }
         }
-        if row_index != 2 {
-            println!("\n-----");
+        println!();
+    }
+
+    fn is_valid(&self, c: &Coordinates) -> bool {
+        self.matrix[c.1][c.0].is_none()
+    }
+
+    fn update(&mut self, c: &Coordinates, player: Player) {
+        self.matrix[c.1][c.0] = Some(player);
+    }
+
+    fn new() -> Self {
+        Field {
+            matrix: [[None; 3]; 3],
         }
     }
-    println!();
+}
+
+fn clear_screen() {
+    print!("\x1B[2J\x1B[1;1H");
 }
 
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
@@ -46,16 +66,16 @@ fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> b
     }
 }
 
-fn check_win_conditions(field: &[[Option<Player>; 3]; 3]) -> bool {
+fn check_win_conditions(field: &Field) -> bool {
     let winning_conditions: [(Option<Player>, Option<Player>, Option<Player>); 8] = [
-        (field[0][0], field[0][1], field[0][2]),
-        (field[1][0], field[1][1], field[1][2]),
-        (field[2][0], field[2][1], field[2][2]),
-        (field[0][0], field[1][0], field[2][0]),
-        (field[0][1], field[1][1], field[2][1]),
-        (field[0][2], field[1][2], field[2][2]),
-        (field[0][0], field[1][1], field[2][2]),
-        (field[2][0], field[1][1], field[0][2]),
+        (field.matrix[0][0], field.matrix[0][1], field.matrix[0][2]),
+        (field.matrix[1][0], field.matrix[1][1], field.matrix[1][2]),
+        (field.matrix[2][0], field.matrix[2][1], field.matrix[2][2]),
+        (field.matrix[0][0], field.matrix[1][0], field.matrix[2][0]),
+        (field.matrix[0][1], field.matrix[1][1], field.matrix[2][1]),
+        (field.matrix[0][2], field.matrix[1][2], field.matrix[2][2]),
+        (field.matrix[0][0], field.matrix[1][1], field.matrix[2][2]),
+        (field.matrix[2][0], field.matrix[1][1], field.matrix[0][2]),
     ];
     for (a, b, c) in winning_conditions {
         let win: bool = are_all_same(&a, &b, &c);
@@ -74,12 +94,11 @@ fn get_current_player(turn: &u8) -> Player {
     }
 }
 
-fn get_input(turn: &u8) -> Option<Coordinates> {
-    let current_player: String = get_current_player(turn).to_string();
+fn get_input(current_player: &Player) -> Option<Coordinates> {
     let mut input: String = String::new();
     println!(
         "player {}, input the coordinates (like \"x, y\"): ",
-        current_player
+        current_player.to_string()
     );
 
     io::stdin()
@@ -108,28 +127,19 @@ fn get_input(turn: &u8) -> Option<Coordinates> {
     }
 }
 
-fn is_valid(c: &Coordinates, field: &[[Option<Player>; 3]; 3]) -> bool {
-    field[c.1][c.0].is_none()
-}
-
-fn update_field(field: &mut [[Option<Player>; 3]; 3], c: &Coordinates, turn: &u8) {
-    let current_player: Player = get_current_player(turn);
-    field[c.1][c.0] = Some(current_player);
-}
-
 fn main() {
-    let mut field: [[Option<Player>; 3]; 3] =
-        [[None, None, None], [None, None, None], [None, None, None]];
+    let mut field: Field = Field::new();
     let mut won: bool = false;
     let mut turn: u8 = 0;
-    while !won && turn < 10 {
-        let coordinates = get_input(&turn);
+    while !won && turn < 9 {
+        let current_player: Player = get_current_player(&turn);
+        let coordinates: Option<Coordinates> = get_input(&current_player);
         match coordinates {
             Some(c) => {
-                if is_valid(&c, &field) {
+                if field.is_valid(&c) {
                     clear_screen();
-                    update_field(&mut field, &c, &turn);
-                    print_field(&field);
+                    field.update(&c, current_player);
+                    field.to_string();
                     turn += 1;
                     won = check_win_conditions(&field);
                 } else {
