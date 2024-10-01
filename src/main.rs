@@ -17,11 +17,11 @@ impl Player {
 
 struct Coordinates(usize, usize);
 
-struct Field {
+struct Board {
     matrix: [[Option<Player>; 3]; 3],
 }
 
-impl Field {
+impl Board {
     fn to_string(&self) {
         println!("  0 1 2 x");
         for (row_index, row) in self.matrix.iter().enumerate() {
@@ -51,7 +51,7 @@ impl Field {
     }
 
     fn new() -> Self {
-        Field {
+        Board {
             matrix: [[None; 3]; 3],
         }
     }
@@ -64,16 +64,16 @@ fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> b
     }
 }
 
-fn check_win_conditions(field: &Field) -> bool {
+fn check_win_conditions(board: &Board) -> bool {
     let winning_conditions: [(Option<Player>, Option<Player>, Option<Player>); 8] = [
-        (field.matrix[0][0], field.matrix[0][1], field.matrix[0][2]),
-        (field.matrix[1][0], field.matrix[1][1], field.matrix[1][2]),
-        (field.matrix[2][0], field.matrix[2][1], field.matrix[2][2]),
-        (field.matrix[0][0], field.matrix[1][0], field.matrix[2][0]),
-        (field.matrix[0][1], field.matrix[1][1], field.matrix[2][1]),
-        (field.matrix[0][2], field.matrix[1][2], field.matrix[2][2]),
-        (field.matrix[0][0], field.matrix[1][1], field.matrix[2][2]),
-        (field.matrix[2][0], field.matrix[1][1], field.matrix[0][2]),
+        (board.matrix[0][0], board.matrix[0][1], board.matrix[0][2]),
+        (board.matrix[1][0], board.matrix[1][1], board.matrix[1][2]),
+        (board.matrix[2][0], board.matrix[2][1], board.matrix[2][2]),
+        (board.matrix[0][0], board.matrix[1][0], board.matrix[2][0]),
+        (board.matrix[0][1], board.matrix[1][1], board.matrix[2][1]),
+        (board.matrix[0][2], board.matrix[1][2], board.matrix[2][2]),
+        (board.matrix[0][0], board.matrix[1][1], board.matrix[2][2]),
+        (board.matrix[2][0], board.matrix[1][1], board.matrix[0][2]),
     ];
     for (a, b, c) in winning_conditions {
         let win: bool = are_all_same(&a, &b, &c);
@@ -85,7 +85,7 @@ fn check_win_conditions(field: &Field) -> bool {
 }
 
 struct TicTacToe {
-    field: Field,
+    board: Board,
     won: bool,
     turn: u8,
 }
@@ -142,12 +142,12 @@ impl TicTacToe {
             let coordinates: Option<Coordinates> = TicTacToe::get_input(&current_player);
             match coordinates {
                 Some(c) => {
-                    if self.field.is_valid(&c) {
+                    if self.board.is_valid(&c) {
                         Self::clear_screen();
-                        self.field.update(&c, current_player);
-                        self.field.to_string();
+                        self.board.update(&c, current_player);
+                        self.board.to_string();
                         self.turn += 1;
-                        self.won = check_win_conditions(&self.field);
+                        self.won = check_win_conditions(&self.board);
                     } else {
                         println!("This was selected before, please pick another place!")
                     }
@@ -166,7 +166,7 @@ impl TicTacToe {
 
     fn new() -> Self {
         TicTacToe {
-            field: Field::new(),
+            board: Board::new(),
             won: false,
             turn: 0,
         }
