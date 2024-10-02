@@ -115,10 +115,10 @@ impl TicTacToe {
             let y: usize = numbers[1].parse().expect("Invalid input for y");
 
             if x > 3 {
-                println!("Invalid x input. Numbers must be 0, 1, or 2.")
+                println!("Invalid x input. Numbers must be 0, 1, or 2.");
             }
             if y > 3 {
-                println!("Invalid y input. Numbers must be 0, 1, or 2.")
+                println!("Invalid y input. Numbers must be 0, 1, or 2.");
             }
 
             if x < 3 && y < 3 {
@@ -149,7 +149,7 @@ impl TicTacToe {
                         self.turn += 1;
                         self.won = check_win_conditions(&self.board);
                     } else {
-                        println!("This was selected before, please pick another place!")
+                        println!("This was selected before, please pick another place!");
                     }
                 }
                 None => {}
@@ -158,9 +158,9 @@ impl TicTacToe {
         if self.won {
             self.turn -= 1;
             let current_player: Player = self.get_current_player();
-            println!("{} won!", current_player.to_string())
+            println!("{} won!", current_player.to_string());
         } else {
-            println!("DRAW!")
+            println!("DRAW!");
         }
     }
 
