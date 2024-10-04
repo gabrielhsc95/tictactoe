@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::coordinates::Coordinates;
 use crate::player::Player;
-use std::io;
+use crate::terminal::Terminal;
 
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
     match (a, b, c) {
@@ -29,9 +29,9 @@ fn check_win_conditions(board: &Board) -> bool {
     }
     false
 }
-
 pub struct TicTacToe {
     board: Board,
+    ui: Terminal,
     won: bool,
     turn: u8,
 }
@@ -45,74 +45,28 @@ impl TicTacToe {
         }
     }
 
-    fn get_input(current_player: &Player) -> Option<Coordinates> {
-        let mut input: String = String::new();
-        println!(
-            "player {}, input the coordinates (like \"x, y\"): ",
-            current_player.to_string()
-        );
-
-        io::stdin()
-            .read_line(&mut input)
-            .expect("Failed to read line");
-        let numbers: Vec<&str> = input.trim().split(", ").collect();
-        if numbers.len() == 2 {
-            let x: usize = numbers[0].parse().expect("Invalid input for x");
-            let y: usize = numbers[1].parse().expect("Invalid input for y");
-
-            if x > 3 {
-                println!("Invalid x input. Numbers must be 0, 1, or 2.");
-            }
-            if y > 3 {
-                println!("Invalid y input. Numbers must be 0, 1, or 2.");
-            }
-
-            if x < 3 && y < 3 {
-                Some(Coordinates(x, y))
-            } else {
-                None
-            }
-        } else {
-            println!("Invalid input. Please enter two numbers separated by a comma.");
-            None
-        }
-    }
-
-    fn clear_screen() {
-        print!("\x1B[2J\x1B[1;1H");
-    }
-
     pub fn play(&mut self) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
-            let coordinates: Option<Coordinates> = TicTacToe::get_input(&current_player);
-            match coordinates {
-                Some(c) => {
-                    if self.board.is_valid(&c) {
-                        Self::clear_screen();
-                        self.board.update(&c, current_player);
-                        self.board.to_string();
-                        self.turn += 1;
-                        self.won = check_win_conditions(&self.board);
-                    } else {
-                        println!("This was selected before, please pick another place!");
-                    }
-                }
-                None => {}
-            }
+            let c: Coordinates = self.ui.get_input(&current_player, &self.board);
+            self.board.update(&c, current_player);
+            self.ui.display_board(&self.board);
+            self.turn += 1;
+            self.won = check_win_conditions(&self.board);
         }
         if self.won {
             self.turn -= 1;
             let current_player: Player = self.get_current_player();
-            println!("{} won!", current_player.to_string());
+            self.ui.display_winner(&current_player);
         } else {
-            println!("DRAW!");
+            self.ui.display_draw();
         }
     }
 
-    pub fn new() -> Self {
+    pub fn new(ui: Terminal) -> Self {
         TicTacToe {
             board: Board::new(),
+            ui,
             won: false,
             turn: 0,
         }
