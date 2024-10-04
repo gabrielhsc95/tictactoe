@@ -1,7 +1,8 @@
-use crate::Board;
-use crate::Coordinates;
-use crate::Player;
+use crate::board::Board;
+use crate::coordinates::Coordinates;
+use crate::player::Player;
 use std::io;
+
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
     match (a, b, c) {
         (Some(x), Some(y), Some(z)) => x == y && y == z,

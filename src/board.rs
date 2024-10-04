@@ -1,5 +1,5 @@
-use crate::Coordinates;
-use crate::Player;
+use crate::coordinates::Coordinates;
+use crate::player::Player;
 
 pub struct Board {
     pub matrix: [[Option<Player>; 3]; 3],
