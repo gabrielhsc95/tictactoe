@@ -1,10 +1,11 @@
 # TODO
 
 - Once I understand more about Traits create a Render, and TerminalRender, or something like that
-  - draw_board
-  - get_user_input
+  - display_board
+  - get_input
+- Once I understand more about Traits create a Strategy, and TerminalRender, or something like that
+  - get_input
 - CPU Player
-  - random strategy
+  - Best
   - Neural Network Strategy?
   - Random win/draw -> random until see a opportunity to win or draw
-  - All possible plays strategy

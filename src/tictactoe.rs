@@ -1,6 +1,7 @@
 use crate::board::Board;
 use crate::coordinates::Coordinates;
 use crate::player::Player;
+use crate::random_strategy::RandomStrategy;
 use crate::terminal::Terminal;
 
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
@@ -45,10 +46,35 @@ impl TicTacToe {
         }
     }
 
-    pub fn play(&mut self) {
+    pub fn play_multi(&mut self) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
             let c: Coordinates = self.ui.get_input(&current_player, &self.board);
+            self.board.update(&c, current_player);
+            self.ui.display_board(&self.board);
+            self.turn += 1;
+            self.won = check_win_conditions(&self.board);
+        }
+        if self.won {
+            self.turn -= 1;
+            let current_player: Player = self.get_current_player();
+            self.ui.display_winner(&current_player);
+        } else {
+            self.ui.display_draw();
+        }
+    }
+
+    pub fn play_single(&mut self, strategy: &RandomStrategy) {
+        while !self.won && self.turn < 9 {
+            let current_player: Player = self.get_current_player();
+            let c: Coordinates;
+            if current_player == Player::X {
+                c = strategy.get_input(&self.board);
+            } else if current_player == Player::O {
+                c = self.ui.get_input(&current_player, &self.board);
+            } else {
+                panic!("It should not end up here!");
+            }
             self.board.update(&c, current_player);
             self.ui.display_board(&self.board);
             self.turn += 1;
