@@ -1,11 +1,25 @@
-# TODO
+### Learning
 
-- Once I understand more about Traits create a Render, and TerminalRender, or something like that
-  - display_board
-  - get_input
-- Once I understand more about Traits create a Strategy, and TerminalRender, or something like that
-  - get_input
-- CPU Player
-  - Best
-  - Neural Network Strategy?
-  - Random win/draw -> random until see a opportunity to win or draw
+- [ ] Documentation
+- [ ] Traits
+- [ ] Unit tests
+
+### Features
+
+- [ ] Interfaces -> Traits
+  - [ ] TUI (in progress)
+
+      explore [Ratatui](https://ratatui.rs)
+
+  - [ ] GUI
+  - [ ] Web
+- [ ] Strategies
+  - [x] Random 
+  - [ ] Best
+  - [ ] Neural Network
+
+    Train and use a Neural Network
+
+  - [ ] Medium 
+
+       Random until see a opportunity to win

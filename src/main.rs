@@ -1,3 +1,30 @@
+//! This is nothing more than a Tic Tac Toe game.
+//!
+//! ## Why?
+//!
+//! I thought it could be a good toy project to learn the language, because I can go
+//! as simple as having something that kinda runs in multiplayer mode, to implementing
+//! an AI CPU player.
+//!
+//! As a result, there will be a lot of things that will be over done, over engineered.
+//! Stuff that borderline unnecessary, like this documentation, but it my way to explore
+//! the features of the Rust language.
+//!
+//! ## How to
+//!
+//! Windows multiplayer
+//! ```console
+//! tictactoe.exe -m
+//! ```
+//!
+//! Windows single player
+//! ```console
+//! tictactoe.exe -s random
+//! ```
+//! The argument is the strategy for the CPU.
+//!
+//! ## TODO
+#![doc = include_str!("../todo.md")]
 mod board;
 mod coordinates;
 mod player;
@@ -9,7 +36,7 @@ use random_strategy::RandomStrategy;
 use std::io;
 use terminal::Terminal;
 use tictactoe::TicTacToe;
-
+/// Entrypoint for the Tic Tac Toe game
 fn main() {
     let matches = Command::new("Tic Tac Toe")
         .version("0.0.1")
