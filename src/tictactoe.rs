@@ -2,7 +2,7 @@ use crate::board::Board;
 use crate::coordinates::Coordinates;
 use crate::player::Player;
 use crate::strategy::Strategy;
-use crate::terminal::Terminal;
+use crate::ui::UserInterface;
 
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
     match (a, b, c) {
@@ -30,14 +30,14 @@ fn check_win_conditions(board: &Board) -> bool {
     }
     false
 }
-pub struct TicTacToe {
+pub struct TicTacToe<T: UserInterface> {
     board: Board,
-    ui: Terminal,
+    ui: T,
     won: bool,
     turn: u8,
 }
 
-impl TicTacToe {
+impl<T: UserInterface> TicTacToe<T> {
     fn get_current_player(&self) -> Player {
         if self.turn % 2 == 0 {
             Player::X
@@ -89,7 +89,7 @@ impl TicTacToe {
         }
     }
 
-    pub fn new(ui: Terminal) -> Self {
+    pub fn new(ui: T) -> Self {
         TicTacToe {
             board: Board::new(),
             ui,

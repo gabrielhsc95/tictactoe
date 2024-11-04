@@ -1,13 +1,14 @@
+use super::UserInterface;
 use crate::board::Board;
 use crate::coordinates::Coordinates;
 use crate::player::Player;
 use regex::Regex;
 use std::io;
 
-pub struct Terminal {}
+pub struct TerminalUserInterface {}
 
-impl Terminal {
-    pub fn get_input(&self, current_player: &Player, board: &Board) -> Coordinates {
+impl UserInterface for TerminalUserInterface {
+    fn get_input(&self, current_player: &Player, board: &Board) -> Coordinates {
         loop {
             let mut input: String = String::new();
             println!(
@@ -60,7 +61,7 @@ impl Terminal {
         }
     }
 
-    pub fn display_board(&self, board: &Board) {
+    fn display_board(&self, board: &Board) {
         clear_screen();
         println!("  0 1 2 x");
         for (row_index, row) in board.matrix.iter().enumerate() {
@@ -81,16 +82,18 @@ impl Terminal {
         println!("\ny");
     }
 
-    pub fn display_winner(&self, player: &Player) {
+    fn display_winner(&self, player: &Player) {
         println!("{} won!", player);
     }
 
-    pub fn display_draw(&self) {
+    fn display_draw(&self) {
         println!("DRAW!");
     }
+}
 
+impl TerminalUserInterface {
     pub fn new() -> Self {
-        Terminal {}
+        TerminalUserInterface {}
     }
 }
 

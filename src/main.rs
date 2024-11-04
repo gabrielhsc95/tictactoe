@@ -29,12 +29,11 @@ mod board;
 mod coordinates;
 mod player;
 mod strategy;
-mod terminal;
 mod tictactoe;
+mod ui;
 use clap::{Arg, ArgGroup, Command};
 use std::io;
 use strategy::Strategy;
-use terminal::Terminal;
 use tictactoe::TicTacToe;
 /// Entrypoint for the Tic Tac Toe game
 fn main() {
@@ -69,8 +68,8 @@ The available strategies are:
         )
         .get_matches();
 
-    let terminal = Terminal::new();
-    let mut tic_tac_toe = TicTacToe::new(terminal);
+    let ui = ui::tui::TerminalUserInterface::new();
+    let mut tic_tac_toe = TicTacToe::new(ui);
     if matches.contains_id("single") {
         let strategy_selection = matches.get_one::<String>("single").unwrap();
         let strategy: Box<dyn Strategy>;
