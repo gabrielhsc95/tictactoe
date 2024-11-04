@@ -18,7 +18,7 @@ impl UserInterface for TerminalUserInterface {
             io::stdin()
                 .read_line(&mut input)
                 .expect("Failed to read line");
-            let re = Regex::new(r"\s+").unwrap();
+            let re = Regex::new(r"\s+").expect("This regex should be valid!");
             let input = re.replace_all(&input, "").to_string();
             let numbers: Vec<&str> = input.trim().split(",").collect();
             if numbers.len() == 2 {

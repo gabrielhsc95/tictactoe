@@ -5,12 +5,6 @@ use rand::prelude::*;
 
 pub struct RandomStrategy {}
 
-impl RandomStrategy {
-    pub fn new() -> Self {
-        RandomStrategy {}
-    }
-}
-
 impl Strategy for RandomStrategy {
     fn get_input(&self, board: &Board) -> Coordinates {
         let options: Vec<Coordinates> = board.get_empties_elements();
@@ -22,5 +16,11 @@ impl Strategy for RandomStrategy {
                 "There must be coordinate available, otherwise the game should have ended."
             ),
         }
+    }
+}
+
+impl RandomStrategy {
+    pub fn new() -> Self {
+        RandomStrategy {}
     }
 }

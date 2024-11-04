@@ -71,7 +71,9 @@ The available strategies are:
     let ui = ui::tui::TerminalUserInterface::new();
     let mut tic_tac_toe = TicTacToe::new(ui);
     if matches.contains_id("single") {
-        let strategy_selection = matches.get_one::<String>("single").unwrap();
+        let strategy_selection = matches
+            .get_one::<String>("single")
+            .expect("The argument parser should have panic before!");
         let strategy: Box<dyn Strategy>;
         if strategy_selection == "best" {
             panic!("Not implemented yet!");
