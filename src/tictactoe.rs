@@ -1,7 +1,7 @@
 use crate::board::Board;
 use crate::coordinates::Coordinates;
 use crate::player::Player;
-use crate::random_strategy::RandomStrategy;
+use crate::strategy::Strategy;
 use crate::terminal::Terminal;
 
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
@@ -64,7 +64,7 @@ impl TicTacToe {
         }
     }
 
-    pub fn play_single(&mut self, strategy: &RandomStrategy) {
+    pub fn play_single(&mut self, strategy: &dyn Strategy) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
             let c: Coordinates;

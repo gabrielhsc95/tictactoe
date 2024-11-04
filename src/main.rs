@@ -28,12 +28,12 @@
 mod board;
 mod coordinates;
 mod player;
-mod random_strategy;
+mod strategy;
 mod terminal;
 mod tictactoe;
 use clap::{Arg, ArgGroup, Command};
-use random_strategy::RandomStrategy;
 use std::io;
+use strategy::Strategy;
 use terminal::Terminal;
 use tictactoe::TicTacToe;
 /// Entrypoint for the Tic Tac Toe game
@@ -73,15 +73,15 @@ The available strategies are:
     let mut tic_tac_toe = TicTacToe::new(terminal);
     if matches.contains_id("single") {
         let strategy_selection = matches.get_one::<String>("single").unwrap();
-        let strategy: RandomStrategy;
+        let strategy: Box<dyn Strategy>;
         if strategy_selection == "best" {
             panic!("Not implemented yet!");
         } else if strategy_selection == "random" {
-            strategy = RandomStrategy::new();
+            strategy = Box::new(strategy::random::RandomStrategy::new());
         } else {
             panic!("It should not end up here!");
         }
-        tic_tac_toe.play_single(&strategy);
+        tic_tac_toe.play_single(&*strategy);
     } else if matches.get_flag("multi") {
         tic_tac_toe.play_multi();
     } else {
