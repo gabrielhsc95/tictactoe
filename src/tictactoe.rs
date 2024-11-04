@@ -73,7 +73,7 @@ impl TicTacToe {
             } else if current_player == Player::O {
                 c = self.ui.get_input(&current_player, &self.board);
             } else {
-                panic!("It should not end up here!");
+                unreachable!("The only players are x and o.");
             }
             self.board.update(&c, current_player);
             self.ui.display_board(&self.board);

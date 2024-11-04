@@ -79,13 +79,15 @@ The available strategies are:
         } else if strategy_selection == "random" {
             strategy = Box::new(strategy::random::RandomStrategy::new());
         } else {
-            panic!("It should not end up here!");
+            unreachable!(
+                "All arguments for strategy selection should have been exhaustively listed!"
+            );
         }
         tic_tac_toe.play_single(&*strategy);
     } else if matches.get_flag("multi") {
         tic_tac_toe.play_multi();
     } else {
-        panic!("It should not end up here!");
+        unreachable!("There is no option besides single and multiplayer");
     }
 
     println!("Press Enter to exit...");
