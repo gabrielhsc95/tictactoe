@@ -12,7 +12,7 @@ impl Terminal {
             let mut input: String = String::new();
             println!(
                 "player {}, input the coordinates (like \"x, y\"): ",
-                print_player(current_player)
+                current_player
             );
             io::stdin()
                 .read_line(&mut input)
@@ -67,7 +67,7 @@ impl Terminal {
             print!("{} ", row_index);
             for (col_index, element) in row.iter().enumerate() {
                 match element {
-                    Some(p) => print!("{}", print_player(p)),
+                    Some(p) => print!("{}", p),
                     None => print!(" "),
                 }
                 if col_index != 2 {
@@ -82,7 +82,7 @@ impl Terminal {
     }
 
     pub fn display_winner(&self, player: &Player) {
-        println!("{} won!", print_player(player));
+        println!("{} won!", player);
     }
 
     pub fn display_draw(&self) {
@@ -96,11 +96,4 @@ impl Terminal {
 
 fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
-}
-
-fn print_player(player: &Player) -> String {
-    match player {
-        Player::X => String::from("x"),
-        Player::O => String::from("o"),
-    }
 }
