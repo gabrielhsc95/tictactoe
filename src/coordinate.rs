@@ -7,6 +7,7 @@
 /// 0,0 means the top left element.
 ///
 /// ```
-/// let c = Coordinates(0, 0);
+/// let c = Coordinate(0, 0);
 /// ```
-pub struct Coordinates(pub usize, pub usize);
+#[derive(Eq, PartialEq, Hash)]
+pub struct Coordinate(pub usize, pub usize);

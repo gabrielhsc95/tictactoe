@@ -1,6 +1,6 @@
 use super::UserInterface;
 use crate::board::Board;
-use crate::coordinates::Coordinates;
+use crate::coordinate::Coordinate;
 use crate::player::Player;
 use regex::Regex;
 use std::io;
@@ -8,7 +8,7 @@ use std::io;
 pub struct TerminalUserInterface {}
 
 impl UserInterface for TerminalUserInterface {
-    fn get_input(&self, current_player: &Player, board: &Board) -> Coordinates {
+    fn get_input(&self, current_player: &Player, board: &Board) -> Coordinate {
         loop {
             let mut input: String = String::new();
             println!(
@@ -48,7 +48,7 @@ impl UserInterface for TerminalUserInterface {
                 }
 
                 if valid_x && valid_y {
-                    let c: Coordinates = Coordinates(x, y);
+                    let c: Coordinate = Coordinate(x, y);
                     if board.is_valid(&c) {
                         break c;
                     } else {

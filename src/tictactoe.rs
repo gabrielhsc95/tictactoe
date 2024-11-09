@@ -1,5 +1,5 @@
 use crate::board::Board;
-use crate::coordinates::Coordinates;
+use crate::coordinate::Coordinate;
 use crate::player::Player;
 use crate::strategy::Strategy;
 use crate::ui::UserInterface;
@@ -12,17 +12,8 @@ fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> b
 }
 
 fn check_win_conditions(board: &Board) -> bool {
-    let winning_conditions: [(Option<Player>, Option<Player>, Option<Player>); 8] = [
-        (board.matrix[0][0], board.matrix[0][1], board.matrix[0][2]),
-        (board.matrix[1][0], board.matrix[1][1], board.matrix[1][2]),
-        (board.matrix[2][0], board.matrix[2][1], board.matrix[2][2]),
-        (board.matrix[0][0], board.matrix[1][0], board.matrix[2][0]),
-        (board.matrix[0][1], board.matrix[1][1], board.matrix[2][1]),
-        (board.matrix[0][2], board.matrix[1][2], board.matrix[2][2]),
-        (board.matrix[0][0], board.matrix[1][1], board.matrix[2][2]),
-        (board.matrix[2][0], board.matrix[1][1], board.matrix[0][2]),
-    ];
-    for (a, b, c) in winning_conditions {
+    let winning_conditions = board.get_winning_conditions();
+    for (a, b, c) in winning_conditions.values() {
         let win: bool = are_all_same(&a, &b, &c);
         if win {
             return win;
@@ -49,7 +40,7 @@ impl<T: UserInterface> TicTacToe<T> {
     pub fn play_multi(&mut self) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
-            let c: Coordinates = self.ui.get_input(&current_player, &self.board);
+            let c: Coordinate = self.ui.get_input(&current_player, &self.board);
             self.board.update(&c, current_player);
             self.ui.display_board(&self.board);
             self.turn += 1;
@@ -67,7 +58,7 @@ impl<T: UserInterface> TicTacToe<T> {
     pub fn play_single(&mut self, strategy: &dyn Strategy) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
-            let c: Coordinates;
+            let c: Coordinate;
             if current_player == Player::X {
                 c = strategy.get_input(&self.board);
             } else if current_player == Player::O {

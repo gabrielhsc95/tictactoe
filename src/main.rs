@@ -26,7 +26,7 @@
 //! ## TODO
 #![doc = include_str!("../todo.md")]
 mod board;
-mod coordinates;
+mod coordinate;
 mod player;
 mod strategy;
 mod tictactoe;
