@@ -35,8 +35,12 @@ use clap::{Arg, ArgGroup, Command};
 use std::io;
 use strategy::Strategy;
 use tictactoe::TicTacToe;
+mod error;
+
+pub use crate::error::{Error, Result};
+
 /// Entrypoint for the Tic Tac Toe game
-fn main() {
+fn main() -> Result<()> {
     let matches = Command::new("Tic Tac Toe")
         .version("0.0.1")
         .author("Gabriel Cardoso")
@@ -76,7 +80,7 @@ The available strategies are:
             .expect("The argument parser should have panic before!");
         let strategy: Box<dyn Strategy>;
         if strategy_selection == "best" {
-            panic!("Not implemented yet!");
+            strategy = Box::new(strategy::random::RandomStrategy::new());
         } else if strategy_selection == "random" {
             strategy = Box::new(strategy::random::RandomStrategy::new());
         } else {
@@ -96,4 +100,6 @@ The available strategies are:
         Ok(_) => {}
         Err(error) => println!("Error reading input: {}", error),
     }
+
+    Ok(())
 }

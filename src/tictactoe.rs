@@ -40,11 +40,13 @@ impl<T: UserInterface> TicTacToe<T> {
     pub fn play_multi(&mut self) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
-            let c: Coordinate = self.ui.get_input(&current_player, &self.board);
-            self.board.update(&c, current_player);
-            self.ui.display_board(&self.board);
-            self.turn += 1;
-            self.won = check_win_conditions(&self.board);
+            match self.ui.get_input(&current_player, &self.board) {
+                Ok(coord) => {
+                    let c: Coordinate = coord;
+                    self.make_a_move(&c, current_player);
+                }
+                Err(e) => self.ui.display_error(e),
+            }
         }
         if self.won {
             self.turn -= 1;
@@ -58,18 +60,18 @@ impl<T: UserInterface> TicTacToe<T> {
     pub fn play_single(&mut self, strategy: &dyn Strategy) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
-            let c: Coordinate;
-            if current_player == Player::X {
-                c = strategy.get_input(&self.board);
-            } else if current_player == Player::O {
-                c = self.ui.get_input(&current_player, &self.board);
-            } else {
-                unreachable!("The only players are x and o.");
+            match current_player {
+                Player::X => {
+                    let c = strategy.get_input(&self.board);
+                    self.make_a_move(&c, current_player);
+                }
+                Player::O => match self.ui.get_input(&current_player, &self.board) {
+                    Ok(c) => {
+                        self.make_a_move(&c, current_player);
+                    }
+                    Err(e) => self.ui.display_error(e),
+                },
             }
-            self.board.update(&c, current_player);
-            self.ui.display_board(&self.board);
-            self.turn += 1;
-            self.won = check_win_conditions(&self.board);
         }
         if self.won {
             self.turn -= 1;
@@ -78,6 +80,13 @@ impl<T: UserInterface> TicTacToe<T> {
         } else {
             self.ui.display_draw();
         }
+    }
+
+    fn make_a_move(&mut self, coordinate: &Coordinate, player: Player) {
+        self.board.update(coordinate, player);
+        self.ui.display_board(&self.board);
+        self.turn += 1;
+        self.won = check_win_conditions(&self.board);
     }
 
     pub fn new(ui: T) -> Self {
