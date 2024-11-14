@@ -15,7 +15,10 @@ use crate::error::Error;
 use crate::error::Result;
 use std::fmt;
 #[derive(Eq, PartialEq, Hash)]
-pub struct Coordinate(pub usize, pub usize);
+pub struct Coordinate(usize, usize);
+
+#[derive(Eq, PartialEq, Hash)]
+pub struct SafeCoordinate(pub usize, pub usize);
 
 #[derive(Debug)]
 pub enum Dimension {
@@ -33,6 +36,14 @@ impl fmt::Display for Dimension {
 }
 
 impl Coordinate {
+    pub fn x(&self) -> usize {
+        self.0
+    }
+
+    pub fn y(&self) -> usize {
+        self.1
+    }
+
     pub fn new(x: usize, y: usize, board: &Board) -> Result<Self> {
         if x > 2 {
             return Err(Error::CoordinateNumberInvalid {
@@ -48,5 +59,9 @@ impl Coordinate {
             Some(p) => return Err(Error::CoordinateOccupied { occupied_by: p }),
             None => Ok(Coordinate(x, y)),
         }
+    }
+
+    pub fn from(safe_coordinate: &SafeCoordinate, board: &Board) -> Result<Self> {
+        Coordinate::new(safe_coordinate.0, safe_coordinate.1, board)
     }
 }
