@@ -98,7 +98,7 @@ The available strategies are:
     println!("Press Enter to exit...");
     match io::stdin().read_line(&mut String::new()) {
         Ok(_) => {}
-        Err(error) => println!("Error reading input: {}", error),
+        Err(error) => println!("Error reading input: {error}"),
     }
 
     Ok(())
