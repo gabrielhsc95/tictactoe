@@ -80,7 +80,7 @@ The available strategies are:
             .expect("The argument parser should have panic before!");
         let strategy: Box<dyn Strategy>;
         if strategy_selection == "best" {
-            strategy = Box::new(strategy::random::RandomStrategy::new());
+            strategy = Box::new(strategy::best::BestStrategy::new());
         } else if strategy_selection == "random" {
             strategy = Box::new(strategy::random::RandomStrategy::new());
         } else {

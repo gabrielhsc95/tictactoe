@@ -1,7 +1,7 @@
 ### Learning
 
-- [ ] Documentation
-- [ ] Traits
+- [ ] Documentation (in progress)
+- [x] Traits
 - [ ] Unit tests
 
 ### Features
@@ -15,7 +15,7 @@
   - [ ] Web
 - [ ] Strategies
   - [x] Random 
-  - [ ] Best
+  - [x] Best
   - [ ] Neural Network
 
     Train and use a Neural Network

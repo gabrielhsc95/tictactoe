@@ -14,10 +14,10 @@ use crate::board::Board;
 use crate::error::Error;
 use crate::error::Result;
 use std::fmt;
-#[derive(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Clone)]
 pub struct Coordinate(usize, usize);
 
-#[derive(Eq, PartialEq, Hash)]
+#[derive(Eq, PartialEq, Hash, Clone)]
 pub struct SafeCoordinate(pub usize, pub usize);
 
 #[derive(Debug)]

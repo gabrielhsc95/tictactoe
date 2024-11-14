@@ -7,10 +7,6 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn is_valid(&self, c: &Coordinate) -> bool {
-        self.matrix[c.y()][c.x()].is_none()
-    }
-
     pub fn update(&mut self, c: &Coordinate, player: Player) {
         self.matrix[c.y()][c.x()] = Some(player);
     }
@@ -25,6 +21,16 @@ impl Board {
             }
         }
         empties_element
+    }
+
+    pub fn get_corners(&self) -> Vec<SafeCoordinate> {
+        let corners: Vec<SafeCoordinate> = vec![
+            SafeCoordinate(0, 0),
+            SafeCoordinate(0, 2),
+            SafeCoordinate(2, 2),
+            SafeCoordinate(2, 0),
+        ];
+        corners
     }
 
     pub fn get_winning_conditions(
