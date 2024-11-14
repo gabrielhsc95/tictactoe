@@ -9,10 +9,10 @@ pub struct RandomStrategy {}
 impl Strategy for RandomStrategy {
     fn get_move(&self, board: &Board) -> Result<Coordinate> {
         let options: Vec<Coordinate> = board.get_empties_elements();
-        let mut rng = thread_rng();
-        let random_coordinate = options.choose(&mut rng);
+        let mut rng: ThreadRng = thread_rng();
+        let random_coordinate: Option<&Coordinate> = options.choose(&mut rng);
         match random_coordinate {
-            Some(coordinate) => Ok(Coordinate(coordinate.0, coordinate.1)),
+            Some(coordinate) => Coordinate::new(coordinate.0, coordinate.1, board),
             None => Err(Error::StrategyInvalidMove(String::from(
                 "There must be coordinate available, otherwise the game should have ended.",
             ))),
