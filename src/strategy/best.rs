@@ -59,7 +59,7 @@ impl Strategy for BestStrategy {
                 // if possible win
                 Some(w) => Coordinate::from(&w, board),
                 None => {
-                    // else TODO: **not lose** or draw so random
+                    // else not lose or draw so random
                     let not_lose_move = self.win_move_for_player(board, Player::O);
                     match not_lose_move {
                         Some(l) => Coordinate::from(&l, board),
