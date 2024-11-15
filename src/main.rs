@@ -50,12 +50,13 @@ fn main() -> Result<()> {
                 .short('s')
                 .long("single")
                 .help("Single player mode")
-                .value_parser(["best", "random"])
+                .value_parser(["best", "random", "medium"])
                 .long_help(
                     "Single player mode
 The available strategies are:
     best: it won't lose
-    random: CPU plays randomly",
+    random: CPU plays randomly
+    medium: random if cannot win",
                 ),
         )
         .arg(
@@ -83,6 +84,8 @@ The available strategies are:
             strategy = Box::new(strategy::best::BestStrategy::new());
         } else if strategy_selection == "random" {
             strategy = Box::new(strategy::random::RandomStrategy::new());
+        } else if strategy_selection == "medium" {
+            strategy = Box::new(strategy::medium::MediumStrategy::new());
         } else {
             unreachable!(
                 "All arguments for strategy selection should have been exhaustively listed!"

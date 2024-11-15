@@ -1,4 +1,5 @@
 pub mod best;
+pub mod medium;
 pub mod random;
 use crate::board::Board;
 use crate::coordinate::Coordinate;

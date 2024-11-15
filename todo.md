@@ -3,6 +3,7 @@
 - [ ] Documentation (in progress)
 - [x] Traits
 - [ ] Unit tests
+- [ ] Simulation testing
 
 ### Features
 
@@ -16,10 +17,9 @@
 - [ ] Strategies
   - [x] Random 
   - [x] Best
+  - [x] Medium 
   - [ ] Neural Network
 
     Train and use a Neural Network
 
-  - [ ] Medium 
 
-       Random until see a opportunity to win
