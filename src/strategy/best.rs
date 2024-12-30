@@ -11,82 +11,11 @@ impl Strategy for BestStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
         let empty_elements: Vec<Coordinate> = board.get_empties_elements();
         let mut rng: ThreadRng = thread_rng();
-        if empty_elements.len() == 9 {
-            // first play
-            // random corner
-            return ValidCoordinate::new(0, 0, board);
-            // return self.get_one_random_valid_corner(board, &mut rng);
-        } else if empty_elements.len() == 7 {
-            // second play
-            let first_play: Coordinate = self.get_first_play(board);
-            if !board.matrix[1][1].is_none() {
-                // second player chose middle
-                // opposite corner
-                return ValidCoordinate::new(
-                    self.opposite_value(first_play.0),
-                    self.opposite_value(first_play.1),
-                    board,
-                );
-            } else {
-                // adjacent corner that is not blocked
-                let opposite_first_play_0 = self.opposite_value(first_play.0);
-                let opposite_first_play_1 = self.opposite_value(first_play.1);
-                if board.matrix[1][first_play.0].is_none()
-                    && board.matrix[opposite_first_play_1][first_play.0].is_none()
-                {
-                    // between the first_play and (first_play.0, opposite_first_play_1),
-                    // which is (first_play.0, 1) is free,
-                    // but also (first_play.0, opposite_first_play_1),
-                    // so we can play there
-                    return ValidCoordinate::new(first_play.0, opposite_first_play_1, board);
-                } else if board.matrix[1][opposite_first_play_0].is_none()
-                    && board.matrix[first_play.1][opposite_first_play_0].is_none()
-                {
-                    // if blocked then the other adjacent is (opposite_first_play_0, first_play.1),
-                    // but we still need to check that corner, which is (opposite_first_play_0, first_play.1)
-                    return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
-                } else {
-                    return self.get_one_random_valid_corner(board, &mut rng);
-                }
-            }
-        } else if empty_elements.len() == 5 {
-            // third play
-            let win_move = self.win_move_for_player(board, Player::X);
-            match win_move {
-                // if possible win
-                Some(w) => ValidCoordinate::from(&w, board),
-                // else not lose or another corner
-                None => {
-                    let not_lose_move = self.win_move_for_player(board, Player::O);
-                    match not_lose_move {
-                        Some(l) => ValidCoordinate::from(&l, board),
-                        None => self.get_one_random_valid_corner(board, &mut rng),
-                    }
-                }
-            }
-        } else if empty_elements.len() == 3 {
-            // forth play
-            let win_move = self.win_move_for_player(board, Player::X);
-            match win_move {
-                // if possible win
-                Some(w) => ValidCoordinate::from(&w, board),
-                None => {
-                    // else not lose or draw so random
-                    let not_lose_move = self.win_move_for_player(board, Player::O);
-                    match not_lose_move {
-                        Some(l) => ValidCoordinate::from(&l, board),
-                        None => {
-                            let m: Coordinate = self.random_move(empty_elements, &mut rng);
-                            return ValidCoordinate::from(&m, board);
-                        }
-                    }
-                }
-            }
+
+        if empty_elements.len() % 2 == 0 {
+            self.defensive(empty_elements, &mut rng, board)
         } else {
-            // last play
-            // random
-            let m: Coordinate = self.random_move(empty_elements, &mut rng);
-            return ValidCoordinate::from(&m, board);
+            self.offensive(empty_elements, &mut rng, board)
         }
     }
 }
@@ -188,5 +117,124 @@ impl BestStrategy {
             .choose(rng)
             .expect("There should be one last valid coordinate!");
         return coordinate.clone();
+    }
+
+    fn offensive(
+        &self,
+        empty_elements: Vec<Coordinate>,
+        rng: &mut ThreadRng,
+        board: &Board,
+    ) -> Result<ValidCoordinate> {
+        if empty_elements.len() == 9 {
+            // first play
+            // random corner
+            return self.get_one_random_valid_corner(board, rng);
+        } else if empty_elements.len() == 7 {
+            // second play
+            let first_play: Coordinate = self.get_first_play(board);
+            if !board.matrix[1][1].is_none() {
+                // second player chose middle
+                // opposite corner
+                return ValidCoordinate::new(
+                    self.opposite_value(first_play.0),
+                    self.opposite_value(first_play.1),
+                    board,
+                );
+            } else {
+                // adjacent corner that is not blocked
+                let opposite_first_play_0 = self.opposite_value(first_play.0);
+                let opposite_first_play_1 = self.opposite_value(first_play.1);
+                if board.matrix[1][first_play.0].is_none()
+                    && board.matrix[opposite_first_play_1][first_play.0].is_none()
+                {
+                    // between the first_play and (first_play.0, opposite_first_play_1),
+                    // which is (first_play.0, 1) is free,
+                    // but also (first_play.0, opposite_first_play_1),
+                    // so we can play there
+                    return ValidCoordinate::new(first_play.0, opposite_first_play_1, board);
+                } else if board.matrix[1][opposite_first_play_0].is_none()
+                    && board.matrix[first_play.1][opposite_first_play_0].is_none()
+                {
+                    // if blocked then the other adjacent is (opposite_first_play_0, first_play.1),
+                    // but we still need to check that corner, which is (opposite_first_play_0, first_play.1)
+                    return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
+                } else {
+                    return self.get_one_random_valid_corner(board, rng);
+                }
+            }
+        } else if empty_elements.len() == 5 {
+            // third play
+            let win_move = self.win_move_for_player(board, Player::X);
+            match win_move {
+                // if possible win
+                Some(w) => ValidCoordinate::from(&w, board),
+                // else not lose or another corner
+                None => {
+                    let not_lose_move = self.win_move_for_player(board, Player::O);
+                    match not_lose_move {
+                        Some(l) => ValidCoordinate::from(&l, board),
+                        None => {
+                            let valid_corners = self.get_valid_corners(board);
+                            for vc in valid_corners {
+                                if board.matrix[1][vc.x()].is_none()
+                                    && board.matrix[vc.y()][1].is_none()
+                                {
+                                    return Ok(vc);
+                                }
+                            }
+                            unreachable!("There must be a valid corner with no adjacent elements!");
+                        }
+                    }
+                }
+            }
+        } else if empty_elements.len() == 3 {
+            // forth play
+            let win_move = self.win_move_for_player(board, Player::X);
+            match win_move {
+                // if possible win
+                Some(w) => ValidCoordinate::from(&w, board),
+                None => {
+                    // else not lose or draw so random
+                    let not_lose_move = self.win_move_for_player(board, Player::O);
+                    match not_lose_move {
+                        Some(l) => ValidCoordinate::from(&l, board),
+                        None => {
+                            let m: Coordinate = self.random_move(empty_elements, rng);
+                            return ValidCoordinate::from(&m, board);
+                        }
+                    }
+                }
+            }
+        } else {
+            // last play
+            // random
+            let m: Coordinate = self.random_move(empty_elements, rng);
+            return ValidCoordinate::from(&m, board);
+        }
+    }
+    fn defensive(
+        &self,
+        empty_elements: Vec<Coordinate>,
+        rng: &mut ThreadRng,
+        board: &Board,
+    ) -> Result<ValidCoordinate> {
+        if empty_elements.len() == 8 {
+            // first play
+            if board.matrix[1][1].is_none() {
+                return ValidCoordinate::new(1, 1, board);
+            } else {
+                let m: Coordinate = self.random_move(empty_elements, rng);
+                return ValidCoordinate::from(&m, board);
+            }
+        } else if empty_elements.len() == 6 {
+            // second play
+        } else if empty_elements.len() == 4 {
+            // third play
+        } else if empty_elements.len() == 2 {
+            // forth play
+        } else {
+            // last play
+        }
+        panic!("Not implemented yet!");
     }
 }
