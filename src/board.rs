@@ -1,4 +1,4 @@
-use crate::coordinate::{Coordinate, SafeCoordinate};
+use crate::coordinate::{Coordinate, ValidCoordinate};
 use crate::player::Player;
 use std::collections::HashMap;
 
@@ -7,28 +7,28 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn update(&mut self, c: &Coordinate, player: Player) {
+    pub fn update(&mut self, c: &ValidCoordinate, player: Player) {
         self.matrix[c.y()][c.x()] = Some(player);
     }
 
-    pub fn get_empties_elements(&self) -> Vec<SafeCoordinate> {
-        let mut empties_element: Vec<SafeCoordinate> = Vec::new();
+    pub fn get_empties_elements(&self) -> Vec<Coordinate> {
+        let mut empties_element: Vec<Coordinate> = Vec::new();
         for (row_index, row) in self.matrix.iter().enumerate() {
             for (col_index, element) in row.iter().enumerate() {
                 if element.is_none() {
-                    empties_element.push(SafeCoordinate(col_index, row_index));
+                    empties_element.push(Coordinate(col_index, row_index));
                 }
             }
         }
         empties_element
     }
 
-    pub fn get_corners(&self) -> Vec<SafeCoordinate> {
-        let corners: Vec<SafeCoordinate> = vec![
-            SafeCoordinate(0, 0),
-            SafeCoordinate(0, 2),
-            SafeCoordinate(2, 2),
-            SafeCoordinate(2, 0),
+    pub fn get_corners(&self) -> Vec<Coordinate> {
+        let corners: Vec<Coordinate> = vec![
+            Coordinate(0, 0),
+            Coordinate(0, 2),
+            Coordinate(2, 2),
+            Coordinate(2, 0),
         ];
         corners
     }
@@ -36,72 +36,40 @@ impl Board {
     pub fn get_winning_conditions(
         &self,
     ) -> HashMap<
-        (SafeCoordinate, SafeCoordinate, SafeCoordinate),
+        (Coordinate, Coordinate, Coordinate),
         (Option<Player>, Option<Player>, Option<Player>),
     > {
         let winning_conditions = HashMap::from([
             (
-                (
-                    SafeCoordinate(0, 0),
-                    SafeCoordinate(1, 0),
-                    SafeCoordinate(2, 0),
-                ),
+                (Coordinate(0, 0), Coordinate(1, 0), Coordinate(2, 0)),
                 (self.matrix[0][0], self.matrix[0][1], self.matrix[0][2]),
             ),
             (
-                (
-                    SafeCoordinate(0, 1),
-                    SafeCoordinate(1, 1),
-                    SafeCoordinate(2, 1),
-                ),
+                (Coordinate(0, 1), Coordinate(1, 1), Coordinate(2, 1)),
                 (self.matrix[1][0], self.matrix[1][1], self.matrix[1][2]),
             ),
             (
-                (
-                    SafeCoordinate(0, 2),
-                    SafeCoordinate(1, 2),
-                    SafeCoordinate(2, 2),
-                ),
+                (Coordinate(0, 2), Coordinate(1, 2), Coordinate(2, 2)),
                 (self.matrix[2][0], self.matrix[2][1], self.matrix[2][2]),
             ),
             (
-                (
-                    SafeCoordinate(0, 0),
-                    SafeCoordinate(0, 1),
-                    SafeCoordinate(0, 2),
-                ),
+                (Coordinate(0, 0), Coordinate(0, 1), Coordinate(0, 2)),
                 (self.matrix[0][0], self.matrix[1][0], self.matrix[2][0]),
             ),
             (
-                (
-                    SafeCoordinate(1, 0),
-                    SafeCoordinate(1, 1),
-                    SafeCoordinate(1, 2),
-                ),
+                (Coordinate(1, 0), Coordinate(1, 1), Coordinate(1, 2)),
                 (self.matrix[0][1], self.matrix[1][1], self.matrix[2][1]),
             ),
             (
-                (
-                    SafeCoordinate(2, 0),
-                    SafeCoordinate(2, 1),
-                    SafeCoordinate(2, 2),
-                ),
+                (Coordinate(2, 0), Coordinate(2, 1), Coordinate(2, 2)),
                 (self.matrix[0][2], self.matrix[1][2], self.matrix[2][2]),
             ),
             (
-                (
-                    SafeCoordinate(0, 0),
-                    SafeCoordinate(1, 1),
-                    SafeCoordinate(2, 2),
-                ),
+                (Coordinate(0, 0), Coordinate(1, 1), Coordinate(2, 2)),
                 (self.matrix[0][0], self.matrix[1][1], self.matrix[2][2]),
             ),
             (
-                (
-                    SafeCoordinate(0, 2),
-                    SafeCoordinate(1, 1),
-                    SafeCoordinate(2, 0),
-                ),
+                (Coordinate(0, 2), Coordinate(1, 1), Coordinate(2, 0)),
                 (self.matrix[2][0], self.matrix[1][1], self.matrix[0][2]),
             ),
         ]);

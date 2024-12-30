@@ -1,6 +1,6 @@
 use super::Strategy;
 use crate::board::Board;
-use crate::coordinate::{Coordinate, SafeCoordinate};
+use crate::coordinate::{Coordinate, ValidCoordinate};
 use crate::error::{Error, Result};
 use crate::player::Player;
 use rand::prelude::*;
@@ -8,33 +8,45 @@ use rand::prelude::*;
 pub struct BestStrategy {}
 
 impl Strategy for BestStrategy {
-    fn get_move(&self, board: &Board) -> Result<Coordinate> {
-        let empty_elements: Vec<SafeCoordinate> = board.get_empties_elements();
+    fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
+        let empty_elements: Vec<Coordinate> = board.get_empties_elements();
         let mut rng: ThreadRng = thread_rng();
         if empty_elements.len() == 9 {
             // first play
             // random corner
-            return self.get_one_random_valid_corner(board, &mut rng);
+            return ValidCoordinate::new(0, 0, board);
+            // return self.get_one_random_valid_corner(board, &mut rng);
         } else if empty_elements.len() == 7 {
             // second play
-            let first_play: SafeCoordinate = self.get_first_play(board);
+            let first_play: Coordinate = self.get_first_play(board);
             if !board.matrix[1][1].is_none() {
                 // second player chose middle
                 // opposite corner
-                return Coordinate::new(
+                return ValidCoordinate::new(
                     self.opposite_value(first_play.0),
                     self.opposite_value(first_play.1),
                     board,
                 );
             } else {
                 // adjacent corner that is not blocked
-                if board.matrix[first_play.0][1].is_none() {
-                    // between the first_play and (first_play.0, opposite_value(first_play.1)),
-                    // which is (first_play.0, 1) is free
-                    return Coordinate::new(first_play.0, self.opposite_value(first_play.1), board);
+                let opposite_first_play_0 = self.opposite_value(first_play.0);
+                let opposite_first_play_1 = self.opposite_value(first_play.1);
+                if board.matrix[1][first_play.0].is_none()
+                    && board.matrix[opposite_first_play_1][first_play.0].is_none()
+                {
+                    // between the first_play and (first_play.0, opposite_first_play_1),
+                    // which is (first_play.0, 1) is free,
+                    // but also (first_play.0, opposite_first_play_1),
+                    // so we can play there
+                    return ValidCoordinate::new(first_play.0, opposite_first_play_1, board);
+                } else if board.matrix[1][opposite_first_play_0].is_none()
+                    && board.matrix[first_play.1][opposite_first_play_0].is_none()
+                {
+                    // if blocked then the other adjacent is (opposite_first_play_0, first_play.1),
+                    // but we still need to check that corner, which is (opposite_first_play_0, first_play.1)
+                    return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
                 } else {
-                    // if blocked then the other adjacent is (opposite_value(first_play.0), first_play.1)
-                    return Coordinate::new(self.opposite_value(first_play.0), first_play.1, board);
+                    return self.get_one_random_valid_corner(board, &mut rng);
                 }
             }
         } else if empty_elements.len() == 5 {
@@ -42,12 +54,12 @@ impl Strategy for BestStrategy {
             let win_move = self.win_move_for_player(board, Player::X);
             match win_move {
                 // if possible win
-                Some(w) => Coordinate::from(&w, board),
+                Some(w) => ValidCoordinate::from(&w, board),
                 // else not lose or another corner
                 None => {
                     let not_lose_move = self.win_move_for_player(board, Player::O);
                     match not_lose_move {
-                        Some(l) => Coordinate::from(&l, board),
+                        Some(l) => ValidCoordinate::from(&l, board),
                         None => self.get_one_random_valid_corner(board, &mut rng),
                     }
                 }
@@ -57,15 +69,15 @@ impl Strategy for BestStrategy {
             let win_move = self.win_move_for_player(board, Player::X);
             match win_move {
                 // if possible win
-                Some(w) => Coordinate::from(&w, board),
+                Some(w) => ValidCoordinate::from(&w, board),
                 None => {
                     // else not lose or draw so random
                     let not_lose_move = self.win_move_for_player(board, Player::O);
                     match not_lose_move {
-                        Some(l) => Coordinate::from(&l, board),
+                        Some(l) => ValidCoordinate::from(&l, board),
                         None => {
-                            let m: SafeCoordinate = self.random_move(empty_elements, &mut rng);
-                            return Coordinate::from(&m, board);
+                            let m: Coordinate = self.random_move(empty_elements, &mut rng);
+                            return ValidCoordinate::from(&m, board);
                         }
                     }
                 }
@@ -73,8 +85,8 @@ impl Strategy for BestStrategy {
         } else {
             // last play
             // random
-            let m: SafeCoordinate = self.random_move(empty_elements, &mut rng);
-            return Coordinate::from(&m, board);
+            let m: Coordinate = self.random_move(empty_elements, &mut rng);
+            return ValidCoordinate::from(&m, board);
         }
     }
 }
@@ -84,11 +96,11 @@ impl BestStrategy {
         BestStrategy {}
     }
 
-    fn get_valid_corners(&self, board: &Board) -> Vec<Coordinate> {
-        let corners: Vec<SafeCoordinate> = board.get_corners();
-        let mut valid_corners: Vec<Coordinate> = Vec::new();
+    fn get_valid_corners(&self, board: &Board) -> Vec<ValidCoordinate> {
+        let corners: Vec<Coordinate> = board.get_corners();
+        let mut valid_corners: Vec<ValidCoordinate> = Vec::new();
         for c in corners {
-            match Coordinate::from(&c, board) {
+            match ValidCoordinate::from(&c, board) {
                 Ok(coord) => valid_corners.push(coord),
                 Err(_) => {}
             }
@@ -100,9 +112,9 @@ impl BestStrategy {
         &self,
         board: &Board,
         rng: &mut ThreadRng,
-    ) -> Result<Coordinate> {
-        let valid_corners: Vec<Coordinate> = self.get_valid_corners(board);
-        let coordinate: Option<&Coordinate> = valid_corners.choose(rng);
+    ) -> Result<ValidCoordinate> {
+        let valid_corners: Vec<ValidCoordinate> = self.get_valid_corners(board);
+        let coordinate: Option<&ValidCoordinate> = valid_corners.choose(rng);
         match coordinate {
             Some(c) => Ok(c.clone()),
             None => Err(Error::StrategyInvalidMove(String::from(
@@ -111,13 +123,13 @@ impl BestStrategy {
         }
     }
 
-    fn get_first_play(&self, board: &Board) -> SafeCoordinate {
+    fn get_first_play(&self, board: &Board) -> Coordinate {
         // don't use this function if it is not the second play of the CPU
-        let corners: Vec<SafeCoordinate> = board.get_corners();
+        let corners: Vec<Coordinate> = board.get_corners();
         self.find_x(corners, board)
     }
 
-    fn find_x(&self, coordinates: Vec<SafeCoordinate>, board: &Board) -> SafeCoordinate {
+    fn find_x(&self, coordinates: Vec<Coordinate>, board: &Board) -> Coordinate {
         for c in coordinates {
             let on_the_board = board.matrix[c.1][c.0];
             match on_the_board {
@@ -140,7 +152,7 @@ impl BestStrategy {
         }
     }
 
-    fn win_move_for_player(&self, board: &Board, player: Player) -> Option<SafeCoordinate> {
+    fn win_move_for_player(&self, board: &Board, player: Player) -> Option<Coordinate> {
         let winning_conditions = board.get_winning_conditions();
         for ((c0, c1, c2), (v0, v1, v2)) in winning_conditions {
             let num: u8 = self.count_player((v0, v1, v2), player);
@@ -171,11 +183,7 @@ impl BestStrategy {
         num
     }
 
-    fn random_move(
-        &self,
-        empty_elements: Vec<SafeCoordinate>,
-        rng: &mut ThreadRng,
-    ) -> SafeCoordinate {
+    fn random_move(&self, empty_elements: Vec<Coordinate>, rng: &mut ThreadRng) -> Coordinate {
         let coordinate = empty_elements
             .choose(rng)
             .expect("There should be one last valid coordinate!");

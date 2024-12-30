@@ -1,6 +1,6 @@
 use super::Strategy;
 use crate::board::Board;
-use crate::coordinate::{Coordinate, SafeCoordinate};
+use crate::coordinate::{Coordinate, ValidCoordinate};
 use crate::error::{Error, Result};
 use crate::player::Player;
 use rand::prelude::*;
@@ -8,16 +8,16 @@ use rand::prelude::*;
 pub struct MediumStrategy {}
 
 impl Strategy for MediumStrategy {
-    fn get_move(&self, board: &Board) -> Result<Coordinate> {
+    fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
         let win_move = self.win_move(board);
         match win_move {
-            Some(w) => Coordinate::from(&w, board),
+            Some(w) => ValidCoordinate::from(&w, board),
             None => {
-                let options: Vec<SafeCoordinate> = board.get_empties_elements();
+                let options: Vec<Coordinate> = board.get_empties_elements();
                 let mut rng: ThreadRng = thread_rng();
-                let random_coordinate: Option<&SafeCoordinate> = options.choose(&mut rng);
+                let random_coordinate: Option<&Coordinate> = options.choose(&mut rng);
                 match random_coordinate {
-                    Some(coordinate) => Coordinate::from(coordinate, board),
+                    Some(coordinate) => ValidCoordinate::from(coordinate, board),
                     None => Err(Error::StrategyInvalidMove(String::from(
                         "There must be coordinate available, otherwise the game should have ended.",
                     ))),
@@ -28,7 +28,7 @@ impl Strategy for MediumStrategy {
 }
 
 impl MediumStrategy {
-    fn win_move(&self, board: &Board) -> Option<SafeCoordinate> {
+    fn win_move(&self, board: &Board) -> Option<Coordinate> {
         let winning_conditions = board.get_winning_conditions();
         for ((c0, c1, c2), (v0, v1, v2)) in winning_conditions {
             let num: u8 = self.count_x((v0, v1, v2));

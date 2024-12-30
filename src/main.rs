@@ -27,14 +27,12 @@
 #![doc = include_str!("../todo.md")]
 mod board;
 mod coordinate;
+mod game;
 mod player;
 mod strategy;
-mod tictactoe;
 mod ui;
 use clap::{Arg, ArgGroup, Command};
 use std::io;
-use strategy::Strategy;
-use tictactoe::TicTacToe;
 mod error;
 
 pub use crate::error::{Error, Result};
@@ -74,12 +72,12 @@ The available strategies are:
         .get_matches();
 
     let ui = ui::tui::TerminalUserInterface::new();
-    let mut tic_tac_toe = TicTacToe::new(ui);
+    let mut tic_tac_toe = game::Game::new(ui);
     if matches.contains_id("single") {
         let strategy_selection = matches
             .get_one::<String>("single")
             .expect("The argument parser should have panic before!");
-        let strategy: Box<dyn Strategy>;
+        let strategy: Box<dyn strategy::Strategy>;
         if strategy_selection == "best" {
             strategy = Box::new(strategy::best::BestStrategy::new());
         } else if strategy_selection == "random" {

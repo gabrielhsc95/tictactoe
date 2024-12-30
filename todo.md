@@ -3,7 +3,7 @@
 - [ ] Documentation (in progress)
 - [x] Traits
 - [ ] Unit tests
-- [ ] Simulation testing
+- [x] Simulation testing
 
 ### Features
 
@@ -13,6 +13,8 @@
       explore [Ratatui](https://ratatui.rs)
 
   - [ ] GUI
+      explore iced.rs
+      
   - [ ] Web
 - [ ] Strategies
   - [x] Random 
