@@ -7,7 +7,7 @@
 
 ### Features
 
-- [ ] Interfaces -> Traits
+- [x] Interfaces -> Traits
   - [ ] TUI (in progress)
 
       explore [Ratatui](https://ratatui.rs)
@@ -17,11 +17,11 @@
       
   - [ ] Web
 - [ ] Strategies
-  - [x] Random 
-  - [x] Best
-  - [x] Medium 
+  - [x] Random
+  - [x] Best (First Player)
+  - [x] Medium (First Player)
+  - [ ] Best (Second Player)
+  - [ ] Medium (Second Player)
   - [ ] Neural Network
 
     Train and use a Neural Network
-
-

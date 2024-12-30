@@ -1,3 +1,4 @@
+#[cfg(test)]
 use tictactoe::game::Game;
 use tictactoe::player::Player;
 use tictactoe::strategy::best::BestStrategy;
