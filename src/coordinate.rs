@@ -14,7 +14,7 @@ use std::fmt;
 #[derive(Eq, PartialEq, Hash, Clone)]
 pub struct ValidCoordinate(usize, usize);
 
-#[derive(Eq, PartialEq, Hash, Clone, Debug)]
+#[derive(Eq, PartialEq, Hash, Debug)]
 pub struct Coordinate(pub usize, pub usize);
 
 #[derive(Debug)]
