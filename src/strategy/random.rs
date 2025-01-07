@@ -1,22 +1,17 @@
 use super::Strategy;
 use crate::board::Board;
 use crate::coordinate::{Coordinate, ValidCoordinate};
-use crate::error::{Error, Result};
+use crate::error::Result;
+use crate::strategy::utils;
 use rand::prelude::*;
 
 pub struct RandomStrategy {}
 
 impl Strategy for RandomStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
-        let options: Vec<Coordinate> = board.get_empties_elements();
+        let empty_elements: Vec<ValidCoordinate> = board.get_empty_elements();
         let mut rng: ThreadRng = thread_rng();
-        let random_coordinate: Option<&Coordinate> = options.choose(&mut rng);
-        match random_coordinate {
-            Some(coordinate) => ValidCoordinate::from(coordinate, board),
-            None => Err(Error::StrategyInvalidMove(String::from(
-                "There must be coordinate available, otherwise the game should have ended.",
-            ))),
-        }
+        utils::random_move(empty_elements, &mut rng)
     }
 }
 

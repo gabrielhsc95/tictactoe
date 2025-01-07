@@ -1,15 +1,16 @@
 use super::Strategy;
 use crate::board::Board;
 use crate::coordinate::{Coordinate, ValidCoordinate};
-use crate::error::{Error, Result};
+use crate::error::Result;
 use crate::player::Player;
+use crate::strategy::utils;
 use rand::prelude::*;
 
 pub struct BestStrategy {}
 
 impl Strategy for BestStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
-        let empty_elements: Vec<Coordinate> = board.get_empties_elements();
+        let empty_elements: Vec<ValidCoordinate> = board.get_empty_elements();
         let mut rng: ThreadRng = thread_rng();
 
         if empty_elements.len() % 2 == 0 {
@@ -23,60 +24,6 @@ impl Strategy for BestStrategy {
 impl BestStrategy {
     pub fn new() -> Self {
         BestStrategy {}
-    }
-
-    fn get_valid_corners(&self, board: &Board) -> Vec<ValidCoordinate> {
-        let corners: Vec<Coordinate> = board.get_corners();
-        let mut valid_corners: Vec<ValidCoordinate> = Vec::new();
-        for c in corners {
-            match ValidCoordinate::from(&c, board) {
-                Ok(coord) => valid_corners.push(coord),
-                Err(_) => {}
-            }
-        }
-        valid_corners
-    }
-
-    fn get_one_random_valid_corner(
-        &self,
-        board: &Board,
-        rng: &mut ThreadRng,
-    ) -> Result<ValidCoordinate> {
-        let valid_corners: Vec<ValidCoordinate> = self.get_valid_corners(board);
-        let coordinate: Option<&ValidCoordinate> = valid_corners.choose(rng);
-        match coordinate {
-            Some(c) => Ok(c.clone()),
-            None => Err(Error::StrategyInvalidMove(String::from(
-                "There must be corner available!",
-            ))),
-        }
-    }
-
-    fn get_valid_edges(&self, board: &Board) -> Vec<ValidCoordinate> {
-        let edges = board.get_edges();
-        let mut valid_edges = Vec::new();
-        for e in edges {
-            match ValidCoordinate::from(&e, board) {
-                Ok(coord) => valid_edges.push(coord),
-                Err(_) => {}
-            }
-        }
-        valid_edges
-    }
-
-    fn get_one_random_valid_edge(
-        &self,
-        board: &Board,
-        rng: &mut ThreadRng,
-    ) -> Result<ValidCoordinate> {
-        let valid_edges: Vec<ValidCoordinate> = self.get_valid_edges(board);
-        let coordinate: Option<&ValidCoordinate> = valid_edges.choose(rng);
-        match coordinate {
-            Some(c) => Ok(c.clone()),
-            None => Err(Error::StrategyInvalidMove(String::from(
-                "There must be edge available!",
-            ))),
-        }
     }
 
     fn get_first_play(&self, board: &Board) -> Coordinate {
@@ -108,54 +55,17 @@ impl BestStrategy {
         }
     }
 
-    fn win_move_for_player(&self, board: &Board, player: Player) -> Option<Coordinate> {
-        let winning_conditions = board.get_winning_conditions();
-        for ((c0, c1, c2), (v0, v1, v2)) in winning_conditions {
-            let num: u8 = self.count_player((v0, v1, v2), player);
-            if num == 2 {
-                if v0.is_none() {
-                    return Some(c0);
-                } else if v1.is_none() {
-                    return Some(c1);
-                } else if v2.is_none() {
-                    return Some(c2);
-                }
-            }
-        }
-        None
-    }
-
-    fn count_player(
-        &self,
-        condition: (Option<Player>, Option<Player>, Option<Player>),
-        player: Player,
-    ) -> u8 {
-        let mut num: u8 = 0;
-        for c in [condition.0, condition.1, condition.2] {
-            if Some(player) == c {
-                num += 1;
-            }
-        }
-        num
-    }
-
-    fn random_move(&self, empty_elements: Vec<Coordinate>, rng: &mut ThreadRng) -> Coordinate {
-        let coordinate = empty_elements
-            .choose(rng)
-            .expect("There should be one last valid coordinate!");
-        return coordinate.clone();
-    }
-
     fn offensive(
         &self,
-        empty_elements: Vec<Coordinate>,
+        empty_elements: Vec<ValidCoordinate>,
         rng: &mut ThreadRng,
         board: &Board,
     ) -> Result<ValidCoordinate> {
         if empty_elements.len() == 9 {
             // first play
             // random corner
-            return self.get_one_random_valid_corner(board, rng);
+            let empty_corners = board.get_empty_corners();
+            return utils::random_move(empty_corners, rng);
         } else if empty_elements.len() == 7 {
             // second play
             let first_play: Coordinate = self.get_first_play(board);
@@ -186,23 +96,24 @@ impl BestStrategy {
                     // but we still need to check that corner, which is (opposite_first_play_0, first_play.1)
                     return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
                 } else {
-                    return self.get_one_random_valid_corner(board, rng);
+                    let valid_corners = board.get_empty_corners();
+                    return utils::random_move(valid_corners, rng);
                 }
             }
         } else if empty_elements.len() == 5 {
             // third play
-            let win_move = self.win_move_for_player(board, Player::X);
+            let win_move = utils::win_move_for_player(board, Player::X);
             match win_move {
                 // if possible win
                 Some(w) => ValidCoordinate::from(&w, board),
                 // else not lose or another corner
                 None => {
-                    let not_lose_move = self.win_move_for_player(board, Player::O);
+                    let not_lose_move = utils::win_move_for_player(board, Player::O);
                     match not_lose_move {
                         Some(l) => ValidCoordinate::from(&l, board),
                         None => {
-                            let valid_corners = self.get_valid_corners(board);
-                            for vc in valid_corners {
+                            let empty_corners = board.get_empty_corners();
+                            for vc in empty_corners {
                                 if board.matrix[1][vc.x()].is_none()
                                     && board.matrix[vc.y()][1].is_none()
                                 {
@@ -216,32 +127,28 @@ impl BestStrategy {
             }
         } else if empty_elements.len() == 3 {
             // forth play
-            let win_move = self.win_move_for_player(board, Player::X);
+            let win_move = utils::win_move_for_player(board, Player::X);
             match win_move {
                 // if possible win
                 Some(w) => ValidCoordinate::from(&w, board),
                 None => {
                     // else not lose or draw so random
-                    let not_lose_move = self.win_move_for_player(board, Player::O);
+                    let not_lose_move = utils::win_move_for_player(board, Player::O);
                     match not_lose_move {
                         Some(l) => ValidCoordinate::from(&l, board),
-                        None => {
-                            let m: Coordinate = self.random_move(empty_elements, rng);
-                            return ValidCoordinate::from(&m, board);
-                        }
+                        None => utils::random_move(empty_elements, rng),
                     }
                 }
             }
         } else {
             // last play
             // random move
-            let m: Coordinate = self.random_move(empty_elements, rng);
-            ValidCoordinate::from(&m, board)
+            utils::random_move(empty_elements, rng)
         }
     }
     fn defensive(
         &self,
-        empty_elements: Vec<Coordinate>,
+        empty_elements: Vec<ValidCoordinate>,
         rng: &mut ThreadRng,
         board: &Board,
     ) -> Result<ValidCoordinate> {
@@ -252,12 +159,13 @@ impl BestStrategy {
                 return ValidCoordinate::new(1, 1, board);
             } else {
                 // random if not random corner
-                self.get_one_random_valid_corner(board, rng)
+                let empty_corners = board.get_empty_corners();
+                return utils::random_move(empty_corners, rng);
             }
         } else if empty_elements.len() == 6 {
             // second play
             // not lose
-            let not_lose_move = self.win_move_for_player(board, Player::X);
+            let not_lose_move = utils::win_move_for_player(board, Player::X);
             match not_lose_move {
                 Some(l) => ValidCoordinate::from(&l, board),
                 None => {
@@ -272,11 +180,12 @@ impl BestStrategy {
                         None => false,
                     };
                     if has_middle {
-                        let valid_corners = self.get_valid_corners(board);
-                        if valid_corners.len() == 2 {
-                            self.get_one_random_valid_edge(board, rng)
+                        let empty_corners = board.get_empty_corners();
+                        if empty_corners.len() == 2 {
+                            let empty_edges = board.get_empty_edges();
+                            return utils::random_move(empty_edges, rng);
                         } else {
-                            for vc in valid_corners {
+                            for vc in empty_corners {
                                 let adjacent_1 = board.matrix[1][vc.x()];
                                 let adjacent_2 = board.matrix[vc.y()][1];
 
@@ -287,61 +196,53 @@ impl BestStrategy {
                             unreachable!("There should be an available corner at this point!");
                         }
                     } else {
-                        self.get_one_random_valid_corner(board, rng)
+                        let empty_corners = board.get_empty_corners();
+                        return utils::random_move(empty_corners, rng);
                     }
                 }
             }
         } else if empty_elements.len() == 4 {
             // third play
-            let win_move = self.win_move_for_player(board, Player::O);
+            let win_move = utils::win_move_for_player(board, Player::O);
             return match win_move {
                 // if possible win
                 Some(w) => ValidCoordinate::from(&w, board),
                 // else not lose or random
                 None => {
-                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    let not_lose_move = utils::win_move_for_player(board, Player::X);
                     match not_lose_move {
                         Some(l) => ValidCoordinate::from(&l, board),
-                        None => {
-                            let m: Coordinate = self.random_move(empty_elements, rng);
-                            return ValidCoordinate::from(&m, board);
-                        }
+                        None => utils::random_move(empty_elements, rng),
                     }
                 }
             };
         } else if empty_elements.len() == 2 {
             // forth play
-            let win_move = self.win_move_for_player(board, Player::O);
+            let win_move = utils::win_move_for_player(board, Player::O);
             return match win_move {
                 // if possible win
                 Some(w) => ValidCoordinate::from(&w, board),
                 // else not lose or random
                 None => {
-                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    let not_lose_move = utils::win_move_for_player(board, Player::X);
                     match not_lose_move {
                         Some(l) => ValidCoordinate::from(&l, board),
-                        None => {
-                            let m: Coordinate = self.random_move(empty_elements, rng);
-                            return ValidCoordinate::from(&m, board);
-                        }
+                        None => utils::random_move(empty_elements, rng),
                     }
                 }
             };
         } else {
             // last play
-            let win_move = self.win_move_for_player(board, Player::O);
+            let win_move = utils::win_move_for_player(board, Player::O);
             return match win_move {
                 // if possible win
                 Some(w) => ValidCoordinate::from(&w, board),
                 // else not lose or random
                 None => {
-                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    let not_lose_move = utils::win_move_for_player(board, Player::X);
                     match not_lose_move {
                         Some(l) => ValidCoordinate::from(&l, board),
-                        None => {
-                            let m: Coordinate = self.random_move(empty_elements, rng);
-                            return ValidCoordinate::from(&m, board);
-                        }
+                        None => utils::random_move(empty_elements, rng),
                     }
                 }
             };

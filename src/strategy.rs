@@ -1,6 +1,7 @@
 pub mod best;
 pub mod medium;
 pub mod random;
+pub mod utils;
 use crate::board::Board;
 use crate::coordinate::ValidCoordinate;
 use crate::error::Result;
