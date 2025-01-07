@@ -1,6 +1,6 @@
 use super::Strategy;
 use crate::board::Board;
-use crate::coordinate::{Coordinate, ValidCoordinate};
+use crate::coordinate::ValidCoordinate;
 use crate::error::Result;
 use crate::strategy::utils;
 use rand::prelude::*;

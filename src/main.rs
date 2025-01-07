@@ -69,6 +69,14 @@ The available strategies are:
                 .args(["single", "multi"])
                 .required(true),
         )
+        .arg(
+            Arg::new("first")
+                .short('f')
+                .long("first")
+                .help("Go first in single player mode")
+                .action(clap::ArgAction::SetTrue)
+                .requires("single"),
+        )
         .get_matches();
 
     let ui = ui::tui::TerminalUserInterface::new();
@@ -89,7 +97,11 @@ The available strategies are:
                 "All arguments for strategy selection should have been exhaustively listed!"
             );
         }
-        tic_tac_toe.play_single(&*strategy);
+        if matches.get_flag("first") {
+            tic_tac_toe.play_single_first(&*strategy);
+        } else {
+            tic_tac_toe.play_single_second(&*strategy);
+        }
     } else if matches.get_flag("multi") {
         tic_tac_toe.play_multi();
     } else {

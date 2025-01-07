@@ -1,3 +1,4 @@
+mod utils;
 #[cfg(test)]
 use tictactoe::game::Game;
 use tictactoe::strategy::best::BestStrategy;
@@ -14,7 +15,7 @@ fn random_vs_random_simulation() {
         let mut tic_tac_toe = Game::new(ui);
         let random_1 = RandomStrategy::new();
         let random_2 = RandomStrategy::new();
-        tic_tac_toe.play_by_itself(&random_1, &random_2);
+        utils::play_by_itself(&mut tic_tac_toe, &random_1, &random_2);
     }
 }
 #[test]
@@ -24,7 +25,7 @@ fn best_vs_random_simulation() {
         let mut tic_tac_toe = Game::new(ui);
         let best = BestStrategy::new();
         let random = RandomStrategy::new();
-        tic_tac_toe.play_by_itself(&best, &random);
+        utils::play_by_itself(&mut tic_tac_toe, &best, &random);
     }
 }
 #[test]
@@ -35,7 +36,7 @@ fn random_vs_best_simulation() {
 
         let random = RandomStrategy::new();
         let best = BestStrategy::new();
-        tic_tac_toe.play_by_itself(&random, &best);
+        utils::play_by_itself(&mut tic_tac_toe, &random, &best);
     }
 }
 
@@ -46,7 +47,7 @@ fn medium_vs_random_simulation() {
         let mut tic_tac_toe = Game::new(ui);
         let medium = MediumStrategy::new();
         let random = RandomStrategy::new();
-        tic_tac_toe.play_by_itself(&medium, &random);
+        utils::play_by_itself(&mut tic_tac_toe, &medium, &random);
     }
 }
 
@@ -57,6 +58,6 @@ fn random_vs_medium_simulation() {
         let mut tic_tac_toe = Game::new(ui);
         let medium = MediumStrategy::new();
         let random = RandomStrategy::new();
-        tic_tac_toe.play_by_itself(&random, &medium);
+        utils::play_by_itself(&mut tic_tac_toe, &random, &medium);
     }
 }
