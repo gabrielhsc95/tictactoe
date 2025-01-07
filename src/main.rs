@@ -75,7 +75,8 @@ The available strategies are:
                 .long("first")
                 .help("Go first in single player mode")
                 .action(clap::ArgAction::SetTrue)
-                .requires("single"),
+                .requires("single")
+                .conflicts_with("multi"),
         )
         .get_matches();
 

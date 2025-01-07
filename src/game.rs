@@ -38,6 +38,7 @@ impl<T: UserInterface> Game<T> {
     }
 
     pub fn play_multi(&mut self) {
+        self.ui.display_board(&self.board);
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
             match self.ui.get_input(&current_player, &self.board) {

@@ -20,8 +20,8 @@
   - [x] Random
   - [x] Best (First Player)
   - [x] Medium (First Player)
-  - [ ] Best (Second Player)
-  - [ ] Medium (Second Player)
+  - [x] Best (Second Player)
+  - [x] Medium (Second Player)
   - [ ] Neural Network
 
     Train and use a Neural Network
