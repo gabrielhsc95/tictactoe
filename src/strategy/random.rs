@@ -9,7 +9,6 @@ pub struct RandomStrategy {}
 impl Strategy for RandomStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
         let options: Vec<Coordinate> = board.get_empties_elements();
-        println!("{options:?}");
         let mut rng: ThreadRng = thread_rng();
         let random_coordinate: Option<&Coordinate> = options.choose(&mut rng);
         match random_coordinate {

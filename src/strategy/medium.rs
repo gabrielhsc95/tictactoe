@@ -9,12 +9,18 @@ pub struct MediumStrategy {}
 
 impl Strategy for MediumStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
-        let win_move = self.win_move(board);
+        let empty_elements: Vec<Coordinate> = board.get_empties_elements();
+        let mut rng: ThreadRng = thread_rng();
+        let win_move: Option<Coordinate>;
+        if empty_elements.len() % 2 == 0 {
+            win_move = self.win_move_for_player(board, Player::O);
+        } else {
+            win_move = self.win_move_for_player(board, Player::X);
+        }
         match win_move {
             Some(w) => ValidCoordinate::from(&w, board),
             None => {
                 let options: Vec<Coordinate> = board.get_empties_elements();
-                let mut rng: ThreadRng = thread_rng();
                 let random_coordinate: Option<&Coordinate> = options.choose(&mut rng);
                 match random_coordinate {
                     Some(coordinate) => ValidCoordinate::from(coordinate, board),
@@ -28,10 +34,10 @@ impl Strategy for MediumStrategy {
 }
 
 impl MediumStrategy {
-    fn win_move(&self, board: &Board) -> Option<Coordinate> {
+    fn win_move_for_player(&self, board: &Board, player: Player) -> Option<Coordinate> {
         let winning_conditions = board.get_winning_conditions();
         for ((c0, c1, c2), (v0, v1, v2)) in winning_conditions {
-            let num: u8 = self.count_x((v0, v1, v2));
+            let num: u8 = self.count_player((v0, v1, v2), player);
             if num == 2 {
                 if v0.is_none() {
                     return Some(c0);
@@ -45,10 +51,14 @@ impl MediumStrategy {
         None
     }
 
-    fn count_x(&self, condition: (Option<Player>, Option<Player>, Option<Player>)) -> u8 {
+    fn count_player(
+        &self,
+        condition: (Option<Player>, Option<Player>, Option<Player>),
+        player: Player,
+    ) -> u8 {
         let mut num: u8 = 0;
         for c in [condition.0, condition.1, condition.2] {
-            if Some(Player::X) == c {
+            if Some(player) == c {
                 num += 1;
             }
         }

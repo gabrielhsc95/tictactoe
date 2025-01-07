@@ -58,7 +58,7 @@ impl ValidCoordinate {
         }
     }
 
-    pub fn from(safe_coordinate: &Coordinate, board: &Board) -> Result<Self> {
-        ValidCoordinate::new(safe_coordinate.0, safe_coordinate.1, board)
+    pub fn from(coordinate: &Coordinate, board: &Board) -> Result<Self> {
+        ValidCoordinate::new(coordinate.0, coordinate.1, board)
     }
 }

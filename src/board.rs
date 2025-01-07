@@ -33,6 +33,16 @@ impl Board {
         corners
     }
 
+    pub fn get_edges(&self) -> Vec<Coordinate> {
+        let edges: Vec<Coordinate> = vec![
+            Coordinate(1, 0),
+            Coordinate(2, 1),
+            Coordinate(1, 2),
+            Coordinate(0, 1),
+        ];
+        edges
+    }
+
     pub fn get_winning_conditions(
         &self,
     ) -> HashMap<

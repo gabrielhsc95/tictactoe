@@ -8,7 +8,7 @@ use tictactoe::ui::tui::TerminalUserInterface;
 // The idea is just to try the strategy a bunch of times (1000) to see if it doesn't panic.
 
 #[test]
-fn random_simulation() {
+fn random_vs_random_simulation() {
     for _ in 0..1000 {
         let ui = TerminalUserInterface::new();
         let mut tic_tac_toe = Game::new(ui);
@@ -18,7 +18,7 @@ fn random_simulation() {
     }
 }
 #[test]
-fn best_simulation() {
+fn best_vs_random_simulation() {
     for _ in 0..1000 {
         let ui = TerminalUserInterface::new();
         let mut tic_tac_toe = Game::new(ui);
@@ -27,14 +27,36 @@ fn best_simulation() {
         tic_tac_toe.play_by_itself(&best, &random);
     }
 }
+#[test]
+fn random_vs_best_simulation() {
+    for _ in 0..1000 {
+        let ui = TerminalUserInterface::new();
+        let mut tic_tac_toe = Game::new(ui);
+
+        let random = RandomStrategy::new();
+        let best = BestStrategy::new();
+        tic_tac_toe.play_by_itself(&random, &best);
+    }
+}
 
 #[test]
-fn medium_simulation() {
+fn medium_vs_random_simulation() {
     for _ in 0..1000 {
         let ui = TerminalUserInterface::new();
         let mut tic_tac_toe = Game::new(ui);
         let medium = MediumStrategy::new();
         let random = RandomStrategy::new();
         tic_tac_toe.play_by_itself(&medium, &random);
+    }
+}
+
+#[test]
+fn random_vs_medium_simulation() {
+    for _ in 0..1000 {
+        let ui = TerminalUserInterface::new();
+        let mut tic_tac_toe = Game::new(ui);
+        let medium = MediumStrategy::new();
+        let random = RandomStrategy::new();
+        tic_tac_toe.play_by_itself(&random, &medium);
     }
 }

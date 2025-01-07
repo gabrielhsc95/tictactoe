@@ -52,6 +52,33 @@ impl BestStrategy {
         }
     }
 
+    fn get_valid_edges(&self, board: &Board) -> Vec<ValidCoordinate> {
+        let edges = board.get_edges();
+        let mut valid_edges = Vec::new();
+        for e in edges {
+            match ValidCoordinate::from(&e, board) {
+                Ok(coord) => valid_edges.push(coord),
+                Err(_) => {}
+            }
+        }
+        valid_edges
+    }
+
+    fn get_one_random_valid_edge(
+        &self,
+        board: &Board,
+        rng: &mut ThreadRng,
+    ) -> Result<ValidCoordinate> {
+        let valid_edges: Vec<ValidCoordinate> = self.get_valid_edges(board);
+        let coordinate: Option<&ValidCoordinate> = valid_edges.choose(rng);
+        match coordinate {
+            Some(c) => Ok(c.clone()),
+            None => Err(Error::StrategyInvalidMove(String::from(
+                "There must be edge available!",
+            ))),
+        }
+    }
+
     fn get_first_play(&self, board: &Board) -> Coordinate {
         // don't use this function if it is not the second play of the CPU
         let corners: Vec<Coordinate> = board.get_corners();
@@ -207,9 +234,9 @@ impl BestStrategy {
             }
         } else {
             // last play
-            // random
+            // random move
             let m: Coordinate = self.random_move(empty_elements, rng);
-            return ValidCoordinate::from(&m, board);
+            ValidCoordinate::from(&m, board)
         }
     }
     fn defensive(
@@ -220,21 +247,104 @@ impl BestStrategy {
     ) -> Result<ValidCoordinate> {
         if empty_elements.len() == 8 {
             // first play
+            // try to play middle
             if board.matrix[1][1].is_none() {
                 return ValidCoordinate::new(1, 1, board);
             } else {
-                let m: Coordinate = self.random_move(empty_elements, rng);
-                return ValidCoordinate::from(&m, board);
+                // random if not random corner
+                self.get_one_random_valid_corner(board, rng)
             }
         } else if empty_elements.len() == 6 {
             // second play
+            // not lose
+            let not_lose_move = self.win_move_for_player(board, Player::X);
+            match not_lose_move {
+                Some(l) => ValidCoordinate::from(&l, board),
+                None => {
+                    let has_middle = match board.matrix[1][1] {
+                        Some(player) => {
+                            if player == Player::O {
+                                true
+                            } else {
+                                false
+                            }
+                        }
+                        None => false,
+                    };
+                    if has_middle {
+                        let valid_corners = self.get_valid_corners(board);
+                        if valid_corners.len() == 2 {
+                            self.get_one_random_valid_edge(board, rng)
+                        } else {
+                            for vc in valid_corners {
+                                let adjacent_1 = board.matrix[1][vc.x()];
+                                let adjacent_2 = board.matrix[vc.y()][1];
+
+                                if adjacent_1.is_some() || adjacent_2.is_some() {
+                                    return Ok(vc);
+                                }
+                            }
+                            unreachable!("There should be an available corner at this point!");
+                        }
+                    } else {
+                        self.get_one_random_valid_corner(board, rng)
+                    }
+                }
+            }
         } else if empty_elements.len() == 4 {
             // third play
+            let win_move = self.win_move_for_player(board, Player::O);
+            return match win_move {
+                // if possible win
+                Some(w) => ValidCoordinate::from(&w, board),
+                // else not lose or random
+                None => {
+                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    match not_lose_move {
+                        Some(l) => ValidCoordinate::from(&l, board),
+                        None => {
+                            let m: Coordinate = self.random_move(empty_elements, rng);
+                            return ValidCoordinate::from(&m, board);
+                        }
+                    }
+                }
+            };
         } else if empty_elements.len() == 2 {
             // forth play
+            let win_move = self.win_move_for_player(board, Player::O);
+            return match win_move {
+                // if possible win
+                Some(w) => ValidCoordinate::from(&w, board),
+                // else not lose or random
+                None => {
+                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    match not_lose_move {
+                        Some(l) => ValidCoordinate::from(&l, board),
+                        None => {
+                            let m: Coordinate = self.random_move(empty_elements, rng);
+                            return ValidCoordinate::from(&m, board);
+                        }
+                    }
+                }
+            };
         } else {
             // last play
+            let win_move = self.win_move_for_player(board, Player::O);
+            return match win_move {
+                // if possible win
+                Some(w) => ValidCoordinate::from(&w, board),
+                // else not lose or random
+                None => {
+                    let not_lose_move = self.win_move_for_player(board, Player::X);
+                    match not_lose_move {
+                        Some(l) => ValidCoordinate::from(&l, board),
+                        None => {
+                            let m: Coordinate = self.random_move(empty_elements, rng);
+                            return ValidCoordinate::from(&m, board);
+                        }
+                    }
+                }
+            };
         }
-        panic!("Not implemented yet!");
     }
 }

@@ -82,7 +82,31 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
-    // for testing
+    pub fn play_single_second(&mut self, strategy: &dyn Strategy) {
+        while !self.won && self.turn < 9 {
+            let current_player: Player = self.get_current_player();
+            match current_player {
+                Player::X => match self.ui.get_input(&current_player, &self.board) {
+                    Ok(c) => {
+                        self.make_a_move(&c, current_player);
+                    }
+                    Err(e) => self.ui.display_error(e),
+                },
+                Player::O => {
+                    let c = strategy.get_input(&self.board);
+                    self.make_a_move(&c, current_player);
+                }
+            }
+        }
+        if self.won {
+            self.turn -= 1;
+            let current_player: Player = self.get_current_player();
+            self.ui.display_winner(&current_player);
+        } else {
+            self.ui.display_draw();
+        }
+    }
+
     pub fn play_by_itself(&mut self, strategy_1: &dyn Strategy, strategy_2: &dyn Strategy) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
