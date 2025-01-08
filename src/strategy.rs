@@ -3,7 +3,7 @@ pub mod medium;
 pub mod random;
 pub mod utils;
 use crate::board::Board;
-use crate::coordinate::ValidCoordinate;
+use crate::coordinate::Coordinate;
 use crate::error::Result;
 
 // Strategy trait requires that any strategy that is implemented returns a ValidCoordinate,
@@ -11,10 +11,13 @@ use crate::error::Result;
 // matching the result is already handled by the trait in get_input, which should be the function that
 // user interfaces should call.
 pub trait Strategy {
-    fn get_move(&self, board: &Board) -> Result<ValidCoordinate>;
-    fn get_input(&self, board: &Board) -> ValidCoordinate {
+    fn get_move(&self, board: &Board) -> Result<Coordinate>;
+    fn get_input(&self, board: &Board) -> Coordinate {
         match self.get_move(board) {
-            Ok(c) => c,
+            Ok(c) => match c.is_valid(board) {
+                Ok(_) => c,
+                Err(e) => panic!("{e}"),
+            },
             Err(e) => panic!("{e}"),
         }
     }

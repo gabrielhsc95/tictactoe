@@ -1,4 +1,4 @@
-use crate::coordinate::{Coordinate, ValidCoordinate};
+use crate::coordinate::Coordinate;
 use crate::player::Player;
 use std::collections::HashMap;
 
@@ -7,19 +7,16 @@ pub struct Board {
 }
 
 impl Board {
-    pub fn update(&mut self, c: &ValidCoordinate, player: Player) {
-        self.matrix[c.y()][c.x()] = Some(player);
+    pub fn update(&mut self, c: &Coordinate, player: Player) {
+        self.matrix[c.1][c.0] = Some(player);
     }
 
-    pub fn get_empty_elements(&self) -> Vec<ValidCoordinate> {
-        let mut empties_element: Vec<ValidCoordinate> = Vec::new();
+    pub fn get_empty_elements(&self) -> Vec<Coordinate> {
+        let mut empties_element: Vec<Coordinate> = Vec::new();
         for (row_index, row) in self.matrix.iter().enumerate() {
             for (col_index, element) in row.iter().enumerate() {
                 if element.is_none() {
-                    empties_element.push(
-                        ValidCoordinate::new(col_index, row_index, self)
-                            .expect("This coordinate should be valid!"),
-                    );
+                    empties_element.push(Coordinate(col_index, row_index));
                 }
             }
         }
@@ -36,16 +33,11 @@ impl Board {
         corners
     }
 
-    pub fn get_empty_corners(&self) -> Vec<ValidCoordinate> {
-        let mut empty_corners: Vec<ValidCoordinate> = Vec::new();
-        for c in self.get_corners() {
-            if self.matrix[c.1][c.0].is_none() {
-                empty_corners.push(
-                    ValidCoordinate::from(&c, self).expect("This coordinate should be valid!"),
-                );
-            }
-        }
-        empty_corners
+    pub fn get_empty_corners(&self) -> Vec<Coordinate> {
+        self.get_corners()
+            .into_iter()
+            .filter(|c| self.matrix[c.1][c.0].is_none())
+            .collect()
     }
 
     pub fn get_edges(&self) -> Vec<Coordinate> {
@@ -58,16 +50,11 @@ impl Board {
         edges
     }
 
-    pub fn get_empty_edges(&self) -> Vec<ValidCoordinate> {
-        let mut empty_edges: Vec<ValidCoordinate> = Vec::new();
-        for c in self.get_edges() {
-            if self.matrix[c.1][c.0].is_none() {
-                empty_edges.push(
-                    ValidCoordinate::from(&c, self).expect("This coordinate should be valid!"),
-                );
-            }
-        }
-        empty_edges
+    pub fn get_empty_edges(&self) -> Vec<Coordinate> {
+        self.get_edges()
+            .into_iter()
+            .filter(|c| self.matrix[c.1][c.0].is_none())
+            .collect()
     }
 
     pub fn get_winning_conditions(

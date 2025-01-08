@@ -11,8 +11,6 @@ use crate::board::Board;
 use crate::error::Error;
 use crate::error::Result;
 use std::fmt;
-#[derive(Eq, PartialEq, Hash, Clone)]
-pub struct ValidCoordinate(usize, usize);
 
 #[derive(Eq, PartialEq, Hash, Debug)]
 pub struct Coordinate(pub usize, pub usize);
@@ -32,33 +30,21 @@ impl fmt::Display for Dimension {
     }
 }
 
-impl ValidCoordinate {
-    pub fn x(&self) -> usize {
-        self.0
-    }
-
-    pub fn y(&self) -> usize {
-        self.1
-    }
-
-    pub fn new(x: usize, y: usize, board: &Board) -> Result<Self> {
-        if x > 2 {
+impl Coordinate {
+    pub fn is_valid(&self, board: &Board) -> Result<()> {
+        if self.0 > 2 {
             return Err(Error::CoordinateNumberInvalid {
                 dimension: Dimension::X,
             });
         }
-        if y > 2 {
+        if self.1 > 2 {
             return Err(Error::CoordinateNumberInvalid {
                 dimension: Dimension::Y,
             });
         }
-        match board.matrix[y][x] {
+        match board.matrix[self.1][self.0] {
             Some(p) => return Err(Error::CoordinateOccupied { occupied_by: p }),
-            None => Ok(ValidCoordinate(x, y)),
+            None => Ok(()),
         }
-    }
-
-    pub fn from(coordinate: &Coordinate, board: &Board) -> Result<Self> {
-        ValidCoordinate::new(coordinate.0, coordinate.1, board)
     }
 }
