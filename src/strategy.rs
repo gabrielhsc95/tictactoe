@@ -10,7 +10,7 @@ use crate::error::Result;
 /// A trait to implement a valid strategy.
 ///
 /// Strategy trait requires that any strategy that is implemented returns a Coordinate.
-/// You only need to implement get_move that returns Result<Coordinate>, if results in an
+/// You only need to implement get_move that returns `Result<Coordinate>`, if results in an
 /// Error get_input will make the code panic. get_input also calls is_valid from Coordinate
 /// to make sure it is a valid move, otherwise, it will also panic.
 ///

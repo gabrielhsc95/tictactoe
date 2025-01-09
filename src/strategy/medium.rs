@@ -1,3 +1,4 @@
+//! It will play random until it finds a winning condition
 use super::Strategy;
 use crate::board::Board;
 use crate::coordinate::Coordinate;

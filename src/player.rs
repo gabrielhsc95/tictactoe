@@ -1,3 +1,4 @@
+//! Players representation (X or O)
 use std::fmt;
 
 #[derive(PartialEq, Clone, Copy, Debug)]

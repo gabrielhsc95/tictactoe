@@ -1,9 +1,11 @@
+//! Game logic to handle inputs and displaying
 use crate::board::Board;
 use crate::coordinate::Coordinate;
 use crate::player::Player;
 use crate::strategy::Strategy;
 use crate::ui::UserInterface;
 
+/// check if all the arguments are the same
 fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> bool {
     match (a, b, c) {
         (Some(x), Some(y), Some(z)) => x == y && y == z,
@@ -11,6 +13,7 @@ fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> b
     }
 }
 
+/// Check for all winning conditions
 fn check_win_conditions(board: &Board) -> bool {
     let winning_conditions = board.get_winning_conditions();
     for (a, b, c) in winning_conditions.values() {
@@ -21,6 +24,7 @@ fn check_win_conditions(board: &Board) -> bool {
     }
     false
 }
+/// Tic Tac Toe logic
 pub struct Game<T: UserInterface> {
     pub board: Board,
     pub ui: T,
@@ -29,6 +33,7 @@ pub struct Game<T: UserInterface> {
 }
 
 impl<T: UserInterface> Game<T> {
+    /// Return the current player
     pub fn get_current_player(&self) -> Player {
         if self.turn % 2 == 0 {
             Player::X
@@ -37,6 +42,7 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
+    /// Play in multiplayer mode
     pub fn play_multi(&mut self) {
         self.ui.display_board(&self.board);
         while !self.won && self.turn < 9 {
@@ -58,6 +64,7 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
+    // Play in single player mode, where the user is the second
     pub fn play_single_second(&mut self, strategy: &dyn Strategy) {
         while !self.won && self.turn < 9 {
             let current_player: Player = self.get_current_player();
@@ -83,6 +90,7 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
+    // Play in single player mode, where the user is the first
     pub fn play_single_first(&mut self, strategy: &dyn Strategy) {
         self.ui.display_board(&self.board);
         while !self.won && self.turn < 9 {
@@ -109,6 +117,7 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
+    // handle a move in the game
     pub fn make_a_move(&mut self, coordinate: &Coordinate, player: Player) {
         self.board.update(coordinate, player);
         self.ui.display_board(&self.board);

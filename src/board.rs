@@ -1,3 +1,4 @@
+//! Board for the game.
 use crate::coordinate::Coordinate;
 use crate::player::Player;
 use std::collections::HashMap;
@@ -5,12 +6,14 @@ use std::collections::HashMap;
 pub struct Board {
     pub matrix: [[Option<Player>; 3]; 3],
 }
-
+/// A matrix 3x3 that holds `Option<Player>`, where None is empty.
 impl Board {
+    /// Adds a new move to the board
     pub fn update(&mut self, c: &Coordinate, player: Player) {
         self.matrix[c.1][c.0] = Some(player);
     }
 
+    /// Return all empty elements from the board
     pub fn get_empty_elements(&self) -> Vec<Coordinate> {
         let mut empties_element: Vec<Coordinate> = Vec::new();
         for (row_index, row) in self.matrix.iter().enumerate() {
@@ -23,6 +26,7 @@ impl Board {
         empties_element
     }
 
+    /// Return all the corners
     pub fn get_corners(&self) -> Vec<Coordinate> {
         let corners: Vec<Coordinate> = vec![
             Coordinate(0, 0),
@@ -33,6 +37,7 @@ impl Board {
         corners
     }
 
+    /// Return all the empty corners
     pub fn get_empty_corners(&self) -> Vec<Coordinate> {
         self.get_corners()
             .into_iter()
@@ -40,6 +45,7 @@ impl Board {
             .collect()
     }
 
+    /// Return all the edges
     pub fn get_edges(&self) -> Vec<Coordinate> {
         let edges: Vec<Coordinate> = vec![
             Coordinate(1, 0),
@@ -50,6 +56,7 @@ impl Board {
         edges
     }
 
+    /// Returxn all the empty edges
     pub fn get_empty_edges(&self) -> Vec<Coordinate> {
         self.get_edges()
             .into_iter()
@@ -57,6 +64,10 @@ impl Board {
             .collect()
     }
 
+    /// Return all the winning conditions
+    ///
+    /// It return a HashMap where the Key is the set of coordinates
+    /// and the values is a set of what are on those coordinates
     pub fn get_winning_conditions(
         &self,
     ) -> HashMap<

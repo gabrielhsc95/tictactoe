@@ -1,3 +1,4 @@
+//! Completely random play
 use super::Strategy;
 use crate::board::Board;
 use crate::coordinate::Coordinate;

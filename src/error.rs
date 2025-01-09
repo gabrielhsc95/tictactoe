@@ -1,9 +1,11 @@
+//! Error from tictactoe
 use derive_more::From;
 
 use crate::{coordinate::Dimension, player::Player};
 
+/// Wrapper around Result<T, E>, so every E is a create error.
 pub type Result<T> = std::result::Result<T, Error>;
-
+/// Errors for the whole game
 #[derive(Debug, From)]
 pub enum Error {
     // Coordinate

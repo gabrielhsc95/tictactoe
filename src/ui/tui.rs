@@ -1,3 +1,4 @@
+//! Terminal User Interface
 use super::UserInterface;
 use crate::board::Board;
 use crate::coordinate::Coordinate;
@@ -7,6 +8,7 @@ use crate::player::Player;
 use regex::Regex;
 use std::io;
 
+/// This is nothing more than println!
 pub struct TerminalUserInterface {}
 
 impl UserInterface for TerminalUserInterface {

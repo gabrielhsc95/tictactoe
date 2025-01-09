@@ -1,3 +1,4 @@
+//! Handle user input and displaying
 pub mod tui;
 use crate::board::Board;
 use crate::coordinate::Coordinate;
