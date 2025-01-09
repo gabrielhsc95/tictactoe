@@ -1,3 +1,4 @@
+//! Best Strategy, it never loses.
 use super::Strategy;
 use crate::board::Board;
 use crate::coordinate::Coordinate;
@@ -25,13 +26,15 @@ impl BestStrategy {
     pub fn new() -> Self {
         BestStrategy {}
     }
-
+    /// Back tracks what was done as a first move
+    ///
+    /// Do not use this function if it is not the second play of the CPU
     fn get_first_play(&self, board: &Board) -> Coordinate {
-        // don't use this function if it is not the second play of the CPU
         let corners: Vec<Coordinate> = board.get_corners();
         self.find_x(corners, board)
     }
 
+    /// Find the first Player X for given Vec<Coordinate>
     fn find_x(&self, coordinates: Vec<Coordinate>, board: &Board) -> Coordinate {
         for c in coordinates {
             let on_the_board = board.matrix[c.1][c.0];
@@ -47,6 +50,7 @@ impl BestStrategy {
         unreachable!("It should not be here!");
     }
 
+    /// Return the opposite coordinate
     fn opposite_value(&self, index: usize) -> usize {
         match index {
             0 => 2,
@@ -55,6 +59,7 @@ impl BestStrategy {
         }
     }
 
+    /// Plays offensive move, it starts
     fn offensive(
         &self,
         empty_elements: Vec<Coordinate>,
@@ -144,6 +149,8 @@ impl BestStrategy {
             utils::random_move(empty_elements, rng)
         }
     }
+
+    /// Play defensive mode, the enemy starts.
     fn defensive(
         &self,
         empty_elements: Vec<Coordinate>,

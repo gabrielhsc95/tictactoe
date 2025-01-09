@@ -4,7 +4,6 @@ use tictactoe::player::Player;
 use tictactoe::strategy::Strategy;
 use tictactoe::ui::UserInterface;
 
-#[cfg(test)]
 pub fn play_by_itself<T: UserInterface>(
     game: &mut Game<T>,
     strategy_1: &dyn Strategy,
