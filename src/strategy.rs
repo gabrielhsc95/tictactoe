@@ -4,7 +4,7 @@ pub mod medium;
 pub mod random;
 pub mod utils;
 use crate::board::Board;
-use crate::coordinate::Coordinate;
+use crate::coordinate::ValidCoordinate;
 use crate::error::Result;
 
 /// A trait to implement a valid strategy.
@@ -22,15 +22,16 @@ use crate::error::Result;
 ///
 /// ```
 /// use tictactoe::board::Board;
-/// use tictactoe::coordinate::Coordinate;
+/// use tictactoe::coordinate::{Coordinate, ValidCoordinate};
 /// use tictactoe::strategy::Strategy;
 /// use tictactoe::error::Result;
 ///
 /// struct ExampleStrategy{}
 ///
 /// impl Strategy for ExampleStrategy {
-///     fn get_move(&self, board: &Board) -> Result<Coordinate> {
-///         Ok(Coordinate(1,1))
+///     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
+///         let c = Coordinate(1,1);
+///         ValidCoordinate::from(&c, board)
 ///     }
 /// }
 /// let board = Board::new();
@@ -39,14 +40,11 @@ use crate::error::Result;
 /// ```
 pub trait Strategy {
     /// Returns the next move of a strategy
-    fn get_move(&self, board: &Board) -> Result<Coordinate>;
+    fn get_move(&self, board: &Board) -> Result<ValidCoordinate>;
     /// Returns a valid Coordinate
-    fn get_input(&self, board: &Board) -> Coordinate {
+    fn get_input(&self, board: &Board) -> ValidCoordinate {
         match self.get_move(board) {
-            Ok(c) => match c.is_valid(board) {
-                Ok(_) => c,
-                Err(e) => panic!("{e}"),
-            },
+            Ok(c) => c,
             Err(e) => panic!("{e}"),
         }
     }

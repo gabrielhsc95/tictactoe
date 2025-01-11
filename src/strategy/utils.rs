@@ -1,6 +1,6 @@
 //! Shared utilities for strategies
 use crate::board::Board;
-use crate::coordinate::Coordinate;
+use crate::coordinate::{Coordinate, ValidCoordinate};
 use crate::error::{Error, Result};
 use crate::player::Player;
 use rand::prelude::*;
@@ -34,13 +34,11 @@ pub fn win_move_for_player(board: &Board, player: Player) -> Option<Coordinate> 
     None
 }
 
-/// Returns a random coordinate from the given options
-pub fn random_move(mut options: Vec<Coordinate>, rng: &mut ThreadRng) -> Result<Coordinate> {
-    if options.is_empty() {
-        Err(Error::StrategyInvalidMove(String::from(
+pub fn random_move(options: Vec<ValidCoordinate>, rng: &mut ThreadRng) -> Result<ValidCoordinate> {
+    match options.choose(rng) {
+        Some(coordinate) => Ok(coordinate.clone()),
+        None => Err(Error::StrategyInvalidMove(String::from(
             "A random_move was called without any option to choose from!",
-        )))
-    } else {
-        Ok(options.swap_remove(rng.gen_range(0..options.len())))
+        ))),
     }
 }

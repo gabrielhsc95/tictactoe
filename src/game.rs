@@ -1,6 +1,6 @@
 //! Game logic to handle inputs and displaying
 use crate::board::Board;
-use crate::coordinate::Coordinate;
+use crate::coordinate::ValidCoordinate;
 use crate::player::Player;
 use crate::strategy::Strategy;
 use crate::ui::UserInterface;
@@ -49,7 +49,7 @@ impl<T: UserInterface> Game<T> {
             let current_player: Player = self.get_current_player();
             match self.ui.get_input(&current_player, &self.board) {
                 Ok(coord) => {
-                    let c: Coordinate = coord;
+                    let c: ValidCoordinate = coord;
                     self.make_a_move(&c, current_player);
                 }
                 Err(e) => self.ui.display_error(e),
@@ -117,8 +117,7 @@ impl<T: UserInterface> Game<T> {
         }
     }
 
-    // handle a move in the game
-    pub fn make_a_move(&mut self, coordinate: &Coordinate, player: Player) {
+    pub fn make_a_move(&mut self, coordinate: &ValidCoordinate, player: Player) {
         self.board.update(coordinate, player);
         self.ui.display_board(&self.board);
         self.turn += 1;

@@ -1,7 +1,7 @@
 //! Terminal User Interface
 use super::UserInterface;
 use crate::board::Board;
-use crate::coordinate::Coordinate;
+use crate::coordinate::ValidCoordinate;
 use crate::error::Error;
 use crate::error::Result;
 use crate::player::Player;
@@ -12,7 +12,7 @@ use std::io;
 pub struct TerminalUserInterface {}
 
 impl UserInterface for TerminalUserInterface {
-    fn get_input(&self, current_player: &Player, board: &Board) -> Result<Coordinate> {
+    fn get_input(&self, current_player: &Player, board: &Board) -> Result<ValidCoordinate> {
         let mut input: String = String::new();
         println!("player {current_player}, input the coordinates (like \"x, y\"): ");
         io::stdin()
@@ -32,9 +32,7 @@ impl UserInterface for TerminalUserInterface {
                 Ok(num) => y = num,
                 Err(e) => return Err(Error::Parse(e)),
             }
-            let c = Coordinate(x, y);
-            c.is_valid(board)?;
-            return Ok(c);
+            return ValidCoordinate::new(x, y, board);
         } else {
             return Err(Error::CoordinateFormatInvalid);
         }
