@@ -2,6 +2,7 @@
 // #[cfg(test)]
 // use tictactoe::board::Board;
 // use tictactoe::coordinate::Coordinate;
+// use tictactoe::coordinate::ValidCoordinate;
 // use tictactoe::error::Error;
 // use tictactoe::error::Result;
 // use tictactoe::game::Game;
@@ -19,8 +20,9 @@
 // }
 
 // impl UserInterface for NothingUI {
-//     fn get_input(&self, current_player: &Player, board: &Board) -> Result<Coordinate> {
-//         Ok(Coordinate(1, 1))
+//     fn get_input(&self, current_player: &Player, board: &Board) -> Result<ValidCoordinate> {
+//         let c = Coordinate(1, 1);
+//         ValidCoordinate::from(&c, board)
 //     }
 //     fn display_error(&self, error: Error) {}
 //     fn display_board(&self, board: &Board) {}

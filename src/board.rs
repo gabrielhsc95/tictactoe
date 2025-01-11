@@ -63,7 +63,7 @@ impl Board {
         edges
     }
 
-    /// Returxn all the empty edges
+    /// Retur n all the empty edges
     pub fn get_empty_edges(&self) -> Vec<ValidCoordinate> {
         let mut empty_edges: Vec<ValidCoordinate> = Vec::new();
         for c in self.get_edges() {
