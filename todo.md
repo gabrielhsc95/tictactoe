@@ -25,3 +25,4 @@
   - [ ] Neural Network
 
     Train and use a Neural Network
+- [ ] Engine with bitwise operations

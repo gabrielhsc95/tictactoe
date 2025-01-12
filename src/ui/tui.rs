@@ -2,8 +2,7 @@
 use super::UserInterface;
 use crate::board::Board;
 use crate::coordinate::ValidCoordinate;
-use crate::error::Error;
-use crate::error::Result;
+use crate::error::{Error, Result};
 use crate::player::Player;
 use regex::Regex;
 use std::io;

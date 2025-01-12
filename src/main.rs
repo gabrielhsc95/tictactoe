@@ -25,7 +25,11 @@
 //!
 //! ## TODO
 #![doc = include_str!("../todo.md")]
+mod bcoodinate;
+mod bgame;
 mod board;
+mod bstrategy;
+mod bui;
 mod coordinate;
 mod game;
 mod player;
@@ -33,6 +37,7 @@ mod strategy;
 mod ui;
 use clap::{Arg, ArgGroup, Command};
 use std::io;
+mod butils;
 mod error;
 
 pub use crate::error::{Error, Result};
@@ -104,6 +109,8 @@ The available strategies are:
             tic_tac_toe.play_single_second(&*strategy);
         }
     } else if matches.get_flag("multi") {
+        let bui = bui::btui::BinaryTerminalUserInterface {};
+        let mut tic_tac_toe = bgame::BinaryGame::new(bui);
         tic_tac_toe.play_multi();
     } else {
         unreachable!("There is no option besides single and multiplayer");

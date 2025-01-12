@@ -1,45 +1,41 @@
-// use std::time::Instant;
-// #[cfg(test)]
-// use tictactoe::board::Board;
-// use tictactoe::coordinate::Coordinate;
-// use tictactoe::coordinate::ValidCoordinate;
-// use tictactoe::error::Error;
-// use tictactoe::error::Result;
-// use tictactoe::game::Game;
-// use tictactoe::player::Player;
-// use tictactoe::strategy::random::RandomStrategy;
-// use tictactoe::ui::UserInterface;
-// mod utils;
+#[cfg(test)]
+use std::time::Instant;
+use tictactoe::bcoodinate::ValidBinaryCoordinate;
+use tictactoe::bgame::BinaryGame;
+use tictactoe::bstrategy::brandom::BinaryRandomStrategy;
+use tictactoe::bui::BinaryUserInterface;
+use tictactoe::error::Error;
+use tictactoe::error::Result;
+mod utils;
 
-// struct NothingUI {}
+struct NothingUI {}
 
-// impl NothingUI {
-//     pub fn new() -> Self {
-//         NothingUI {}
-//     }
-// }
+impl NothingUI {
+    pub fn new() -> Self {
+        NothingUI {}
+    }
+}
 
-// impl UserInterface for NothingUI {
-//     fn get_input(&self, current_player: &Player, board: &Board) -> Result<ValidCoordinate> {
-//         let c = Coordinate(1, 1);
-//         ValidCoordinate::from(&c, board)
-//     }
-//     fn display_error(&self, error: Error) {}
-//     fn display_board(&self, board: &Board) {}
-//     fn display_winner(&self, player: &Player) {}
-//     fn display_draw(&self) {}
-// }
+impl BinaryUserInterface for NothingUI {
+    fn get_input(&self, current_player: bool, board: u32) -> Result<ValidBinaryCoordinate> {
+        ValidBinaryCoordinate::new(0, current_player, board)
+    }
+    fn display_error(&self, error: Error) {}
+    fn display_board(&self, board: u32) {}
+    fn display_winner(&self, player: bool) {}
+    fn display_draw(&self) {}
+}
 
-// #[test]
-// fn performance_test() {
-//     let start = Instant::now();
-//     for _ in 0..1000000 {
-//         let nothing = NothingUI::new();
-//         let mut tic_tac_toe = Game::new(nothing);
-//         let random_1 = RandomStrategy::new();
-//         let random_2 = RandomStrategy::new();
-//         utils::play_by_itself(&mut tic_tac_toe, &random_1, &random_2);
-//     }
-//     let elapsed = start.elapsed();
-//     panic!("Elapsed: {elapsed:?}")
-// }
+#[test]
+fn performance_test() {
+    let start = Instant::now();
+    for _ in 0..1000000 {
+        let nothing = NothingUI::new();
+        let mut tic_tac_toe = BinaryGame::new(nothing);
+        let random_1 = BinaryRandomStrategy::new();
+        let random_2 = BinaryRandomStrategy::new();
+        utils::play_by_itself_binary(&mut tic_tac_toe, &random_1, &random_2);
+    }
+    let elapsed = start.elapsed();
+    panic!("Elapsed: {elapsed:?}")
+}

@@ -13,9 +13,14 @@ pub enum Error {
         dimension: Dimension,
     },
     CoordinateFormatInvalid,
+    BinaryCoordinatePositionInvalid,
     CoordinateOccupied {
         occupied_by: Player,
     },
+    BinaryCoordinateOccupied {
+        occupied_by: bool,
+    },
+    // }
     StrategyInvalidMove(String),
     // External
     #[from]
@@ -38,6 +43,21 @@ impl std::fmt::Display for Error {
                 f,
                 "This is already occupied by {occupied_by}, please pick another place!"
             ),
+            Error::BinaryCoordinatePositionInvalid => {
+                write!(f, "Invalid input. Position must be between 0 and 8.")
+            }
+            Error::BinaryCoordinateOccupied { occupied_by } => {
+                let player: char;
+                if *occupied_by {
+                    player = 'x';
+                } else {
+                    player = 'o';
+                }
+                write!(
+                    f,
+                    "This is already occupied by {player}, please pick another place!"
+                )
+            }
             Error::StrategyInvalidMove(s) => write!(f, "{s}"),
             Error::Io(e) => write!(f, "{e}"),
             Error::Parse(e) => write!(f, "{e}"),
