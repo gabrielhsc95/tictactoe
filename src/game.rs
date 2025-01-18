@@ -17,7 +17,7 @@ fn are_all_same(a: &Option<Player>, b: &Option<Player>, c: &Option<Player>) -> b
 fn check_win_conditions(board: &Board) -> bool {
     let winning_conditions = board.get_winning_conditions();
     for (a, b, c) in winning_conditions.values() {
-        let win: bool = are_all_same(&a, &b, &c);
+        let win: bool = are_all_same(a, b, c);
         if win {
             return win;
         }
@@ -126,7 +126,7 @@ impl<T: UserInterface> Game<T> {
 
     pub fn new(ui: T) -> Self {
         Game {
-            board: Board::new(),
+            board: Board::default(),
             ui,
             won: false,
             turn: 0,

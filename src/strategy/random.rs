@@ -21,3 +21,9 @@ impl RandomStrategy {
         RandomStrategy {}
     }
 }
+
+impl Default for RandomStrategy {
+    fn default() -> Self {
+        Self::new()
+    }
+}

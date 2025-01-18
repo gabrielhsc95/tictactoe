@@ -2,6 +2,9 @@ use crate::coordinate::{Coordinate, ValidCoordinate};
 use crate::player::Player;
 use std::collections::HashMap;
 
+type TripletCoordinate = (Coordinate, Coordinate, Coordinate);
+type TripletValue = (Option<Player>, Option<Player>, Option<Player>);
+
 pub struct Board {
     pub matrix: [[Option<Player>; 3]; 3],
 }
@@ -80,13 +83,8 @@ impl Board {
     ///
     /// It return a HashMap where the Key is the set of coordinates
     /// and the values is a set of what are on those coordinates
-    pub fn get_winning_conditions(
-        &self,
-    ) -> HashMap<
-        (Coordinate, Coordinate, Coordinate),
-        (Option<Player>, Option<Player>, Option<Player>),
-    > {
-        let winning_conditions = HashMap::from([
+    pub fn get_winning_conditions(&self) -> HashMap<TripletCoordinate, TripletValue> {
+        HashMap::from([
             (
                 (Coordinate(0, 0), Coordinate(1, 0), Coordinate(2, 0)),
                 (self.matrix[0][0], self.matrix[0][1], self.matrix[0][2]),
@@ -119,13 +117,18 @@ impl Board {
                 (Coordinate(0, 2), Coordinate(1, 1), Coordinate(2, 0)),
                 (self.matrix[2][0], self.matrix[1][1], self.matrix[0][2]),
             ),
-        ]);
-        winning_conditions
+        ])
     }
 
     pub fn new() -> Self {
         Board {
             matrix: [[None; 3]; 3],
         }
+    }
+}
+
+impl Default for Board {
+    fn default() -> Self {
+        Self::new()
     }
 }

@@ -47,12 +47,7 @@ impl std::fmt::Display for Error {
                 write!(f, "Invalid input. Position must be between 0 and 8.")
             }
             Error::BinaryCoordinateOccupied { occupied_by } => {
-                let player: char;
-                if *occupied_by {
-                    player = 'x';
-                } else {
-                    player = 'o';
-                }
+                let player: char = if *occupied_by { 'x' } else { 'o' };
                 write!(
                     f,
                     "This is already occupied by {player}, please pick another place!"

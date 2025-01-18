@@ -85,7 +85,7 @@ The available strategies are:
         )
         .get_matches();
 
-    let ui = ui::tui::TerminalUserInterface::new();
+    let ui = ui::tui::TerminalUserInterface::default();
     let mut tic_tac_toe = game::Game::new(ui);
     if matches.contains_id("single") {
         let strategy_selection = matches
@@ -93,11 +93,11 @@ The available strategies are:
             .expect("The argument parser should have panic before!");
         let strategy: Box<dyn strategy::Strategy>;
         if strategy_selection == "best" {
-            strategy = Box::new(strategy::best::BestStrategy::new());
+            strategy = Box::new(strategy::best::BestStrategy::default());
         } else if strategy_selection == "random" {
-            strategy = Box::new(strategy::random::RandomStrategy::new());
+            strategy = Box::new(strategy::random::RandomStrategy::default());
         } else if strategy_selection == "medium" {
-            strategy = Box::new(strategy::medium::MediumStrategy::new());
+            strategy = Box::new(strategy::medium::MediumStrategy::default());
         } else {
             unreachable!(
                 "All arguments for strategy selection should have been exhaustively listed!"

@@ -13,12 +13,11 @@ impl Strategy for MediumStrategy {
     fn get_move(&self, board: &Board) -> Result<ValidCoordinate> {
         let empty_elements: Vec<ValidCoordinate> = board.get_empty_elements();
         let mut rng: ThreadRng = thread_rng();
-        let win_move: Option<Coordinate>;
-        if empty_elements.len() % 2 == 0 {
-            win_move = utils::win_move_for_player(board, Player::O);
+        let win_move: Option<Coordinate> = if empty_elements.len() % 2 == 0 {
+            utils::win_move_for_player(board, Player::O)
         } else {
-            win_move = utils::win_move_for_player(board, Player::X);
-        }
+            utils::win_move_for_player(board, Player::X)
+        };
         match win_move {
             Some(w) => ValidCoordinate::from(&w, board),
             None => {
@@ -38,5 +37,11 @@ impl Strategy for MediumStrategy {
 impl MediumStrategy {
     pub fn new() -> Self {
         MediumStrategy {}
+    }
+}
+
+impl Default for MediumStrategy {
+    fn default() -> Self {
+        Self::new()
     }
 }

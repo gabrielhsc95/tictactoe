@@ -1,8 +1,6 @@
 use crate::bcoodinate::ValidBinaryCoordinate;
 use crate::bstrategy::BinaryStrategy;
 use crate::bui::BinaryUserInterface;
-use crate::player;
-use std::io;
 
 pub struct BinaryGame<T: BinaryUserInterface> {
     pub board: u32,

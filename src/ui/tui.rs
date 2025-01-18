@@ -19,7 +19,7 @@ impl UserInterface for TerminalUserInterface {
             .expect("Failed to read line");
         let re = Regex::new(r"\s+").expect("This regex should be valid!");
         let input = re.replace_all(&input, "").to_string();
-        let numbers: Vec<&str> = input.trim().split(|s| s == ',' || s == '.').collect();
+        let numbers: Vec<&str> = input.trim().split(|s| [',', '.'].contains(&s)).collect();
         let x: usize;
         let y: usize;
         if numbers.len() == 2 {
@@ -31,9 +31,9 @@ impl UserInterface for TerminalUserInterface {
                 Ok(num) => y = num,
                 Err(e) => return Err(Error::Parse(e)),
             }
-            return ValidCoordinate::new(x, y, board);
+            ValidCoordinate::new(x, y, board)
         } else {
-            return Err(Error::CoordinateFormatInvalid);
+            Err(Error::CoordinateFormatInvalid)
         }
     }
 
@@ -76,6 +76,14 @@ impl TerminalUserInterface {
         TerminalUserInterface {}
     }
 }
+
+impl Default for TerminalUserInterface {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
+/// Clear the screen
 
 fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");

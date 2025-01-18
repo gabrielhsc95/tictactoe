@@ -20,3 +20,9 @@ impl BinaryRandomStrategy {
         BinaryRandomStrategy {}
     }
 }
+
+impl Default for BinaryRandomStrategy {
+    fn default() -> Self {
+        Self::new()
+    }
+}

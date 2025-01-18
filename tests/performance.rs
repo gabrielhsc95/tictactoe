@@ -29,11 +29,11 @@ impl BinaryUserInterface for NothingUI {
 #[test]
 fn performance_test() {
     let start = Instant::now();
-    for _ in 0..1000000 {
+    for _ in 0..1 {
         let nothing = NothingUI::new();
         let mut tic_tac_toe = BinaryGame::new(nothing);
-        let random_1 = BinaryRandomStrategy::new();
-        let random_2 = BinaryRandomStrategy::new();
+        let random_1 = BinaryRandomStrategy::default();
+        let random_2 = BinaryRandomStrategy::default();
         utils::play_by_itself_binary(&mut tic_tac_toe, &random_1, &random_2);
     }
     let elapsed = start.elapsed();

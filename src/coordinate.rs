@@ -20,7 +20,7 @@ use std::fmt;
 /// use tictactoe::coordinate::{Coordinate, ValidCoordinate};
 /// use tictactoe::error::Result;
 ///
-/// let board = Board::new();
+/// let board = Board::default();
 /// let coordinate = Coordinate(42, 42);
 /// assert!(ValidCoordinate::from(&coordinate, &board).is_err());
 /// let coordinate = Coordinate(0, 0);
@@ -69,7 +69,7 @@ impl ValidCoordinate {
             });
         }
         match board.matrix[y][x] {
-            Some(p) => return Err(Error::CoordinateOccupied { occupied_by: p }),
+            Some(p) => Err(Error::CoordinateOccupied { occupied_by: p }),
             None => Ok(ValidCoordinate(x, y)),
         }
     }

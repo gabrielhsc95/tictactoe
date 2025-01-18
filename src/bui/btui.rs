@@ -10,19 +10,14 @@ pub struct BinaryTerminalUserInterface {}
 impl BinaryUserInterface for BinaryTerminalUserInterface {
     fn get_input(&self, current_player: bool, board: u32) -> Result<ValidBinaryCoordinate> {
         let mut input: String = String::new();
-        let player: char;
-        if current_player {
-            player = 'x';
-        } else {
-            player = 'o';
-        }
+        let player: char = if current_player { 'x' } else { 'o' };
         println!("player {player}, input the coordinates (like \"x, y\"): ");
         io::stdin()
             .read_line(&mut input)
             .expect("Failed to read line");
         let re = Regex::new(r"\s+").expect("This regex should be valid!");
         let input = re.replace_all(&input, "").to_string();
-        let numbers: Vec<&str> = input.trim().split(|s| s == ',' || s == '.').collect();
+        let numbers: Vec<&str> = input.trim().split(|s| [',', '.'].contains(&s)).collect();
         let x: usize;
         let y: usize;
         if numbers.len() == 2 {
@@ -34,9 +29,9 @@ impl BinaryUserInterface for BinaryTerminalUserInterface {
                 Ok(num) => y = num,
                 Err(e) => return Err(Error::Parse(e)),
             }
-            return ValidBinaryCoordinate::from_xy(x, y, current_player, board);
+            ValidBinaryCoordinate::from_xy(x, y, current_player, board)
         } else {
-            return Err(Error::CoordinateFormatInvalid);
+            Err(Error::CoordinateFormatInvalid)
         }
     }
 

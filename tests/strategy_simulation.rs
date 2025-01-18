@@ -11,31 +11,31 @@ use tictactoe::ui::tui::TerminalUserInterface;
 #[test]
 fn random_vs_random_simulation() {
     for _ in 0..1000 {
-        let ui = TerminalUserInterface::new();
+        let ui = TerminalUserInterface::default();
         let mut tic_tac_toe = Game::new(ui);
-        let random_1 = RandomStrategy::new();
-        let random_2 = RandomStrategy::new();
+        let random_1 = RandomStrategy::default();
+        let random_2 = RandomStrategy::default();
         utils::play_by_itself(&mut tic_tac_toe, &random_1, &random_2);
     }
 }
 #[test]
 fn best_vs_random_simulation() {
     for _ in 0..1000 {
-        let ui = TerminalUserInterface::new();
+        let ui = TerminalUserInterface::default();
         let mut tic_tac_toe = Game::new(ui);
-        let best = BestStrategy::new();
-        let random = RandomStrategy::new();
+        let best = BestStrategy::default();
+        let random = RandomStrategy::default();
         utils::play_by_itself(&mut tic_tac_toe, &best, &random);
     }
 }
 #[test]
 fn random_vs_best_simulation() {
     for _ in 0..1000 {
-        let ui = TerminalUserInterface::new();
+        let ui = TerminalUserInterface::default();
         let mut tic_tac_toe = Game::new(ui);
 
-        let random = RandomStrategy::new();
-        let best = BestStrategy::new();
+        let random = RandomStrategy::default();
+        let best = BestStrategy::default();
         utils::play_by_itself(&mut tic_tac_toe, &random, &best);
     }
 }
@@ -43,10 +43,10 @@ fn random_vs_best_simulation() {
 #[test]
 fn medium_vs_random_simulation() {
     for _ in 0..1000 {
-        let ui = TerminalUserInterface::new();
-        let mut tic_tac_toe = Game::new(ui);
-        let medium = MediumStrategy::new();
-        let random = RandomStrategy::new();
+        let ui = TerminalUserInterface::default();
+        let mut tic_tac_toe: Game<TerminalUserInterface> = Game::new(ui);
+        let medium = MediumStrategy::default();
+        let random = RandomStrategy::default();
         utils::play_by_itself(&mut tic_tac_toe, &medium, &random);
     }
 }
@@ -54,10 +54,10 @@ fn medium_vs_random_simulation() {
 #[test]
 fn random_vs_medium_simulation() {
     for _ in 0..1000 {
-        let ui = TerminalUserInterface::new();
+        let ui = TerminalUserInterface::default();
         let mut tic_tac_toe = Game::new(ui);
-        let medium = MediumStrategy::new();
-        let random = RandomStrategy::new();
+        let medium = MediumStrategy::default();
+        let random = RandomStrategy::default();
         utils::play_by_itself(&mut tic_tac_toe, &random, &medium);
     }
 }

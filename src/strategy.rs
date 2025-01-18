@@ -34,7 +34,7 @@ use crate::error::Result;
 ///         ValidCoordinate::from(&c, board)
 ///     }
 /// }
-/// let board = Board::new();
+/// let board = Board::default();
 /// let example_strategy = ExampleStrategy{};
 /// example_strategy.get_input(&board);
 /// ```

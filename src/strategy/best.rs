@@ -38,13 +38,10 @@ impl BestStrategy {
     fn find_x(&self, coordinates: Vec<Coordinate>, board: &Board) -> Coordinate {
         for c in coordinates {
             let on_the_board = board.matrix[c.1][c.0];
-            match on_the_board {
-                Some(p) => {
-                    if p == Player::X {
-                        return c;
-                    }
+            if let Some(p) = on_the_board {
+                if p == Player::X {
+                    return c;
                 }
-                None => {}
             }
         }
         unreachable!("It should not be here!");
@@ -70,11 +67,11 @@ impl BestStrategy {
             // first play
             // random corner
             let empty_corners = board.get_empty_corners();
-            return utils::random_move(empty_corners, rng);
+            utils::random_move(empty_corners, rng)
         } else if empty_elements.len() == 7 {
             // second play
             let first_play: Coordinate = self.get_first_play(board);
-            if !board.matrix[1][1].is_none() {
+            if board.matrix[1][1].is_some() {
                 // second player chose middle
                 // opposite corner
                 return ValidCoordinate::new(
@@ -163,11 +160,11 @@ impl BestStrategy {
             // first play
             // try to play middle
             if board.matrix[1][1].is_none() {
-                return ValidCoordinate::new(1, 1, board);
+                ValidCoordinate::new(1, 1, board)
             } else {
                 // random if not random corner
                 let empty_corners = board.get_empty_corners();
-                return utils::random_move(empty_corners, rng);
+                utils::random_move(empty_corners, rng)
             }
         } else if empty_elements.len() == 6 {
             // second play
@@ -177,20 +174,14 @@ impl BestStrategy {
                 Some(l) => ValidCoordinate::from(&l, board),
                 None => {
                     let has_middle = match board.matrix[1][1] {
-                        Some(player) => {
-                            if player == Player::O {
-                                true
-                            } else {
-                                false
-                            }
-                        }
+                        Some(player) => player == Player::O,
                         None => false,
                     };
                     if has_middle {
                         let empty_corners = board.get_empty_corners();
                         if empty_corners.len() == 2 {
                             let empty_edges = board.get_empty_edges();
-                            return utils::random_move(empty_edges, rng);
+                            utils::random_move(empty_edges, rng)
                         } else {
                             for vc in empty_corners {
                                 let adjacent_1 = board.matrix[1][vc.x()];
@@ -204,7 +195,7 @@ impl BestStrategy {
                         }
                     } else {
                         let empty_corners = board.get_empty_corners();
-                        return utils::random_move(empty_corners, rng);
+                        utils::random_move(empty_corners, rng)
                     }
                 }
             }
@@ -254,5 +245,11 @@ impl BestStrategy {
                 }
             };
         }
+    }
+}
+
+impl Default for BestStrategy {
+    fn default() -> Self {
+        Self::new()
     }
 }
