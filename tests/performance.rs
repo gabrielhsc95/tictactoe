@@ -37,5 +37,5 @@ fn performance_test() {
         utils::play_by_itself_binary(&mut tic_tac_toe, &random_1, &random_2);
     }
     let elapsed = start.elapsed();
-    panic!("Elapsed: {elapsed:?}")
+    // panic!("Elapsed: {elapsed:?}")
 }

@@ -71,6 +71,18 @@ impl BinaryUserInterface for BinaryTerminalUserInterface {
     }
 }
 
+impl BinaryTerminalUserInterface {
+    pub fn new() -> Self {
+        BinaryTerminalUserInterface {}
+    }
+}
+
+impl Default for BinaryTerminalUserInterface {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+
 fn clear_screen() {
     print!("\x1B[2J\x1B[1;1H");
 }

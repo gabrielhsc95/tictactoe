@@ -2,6 +2,7 @@ use crate::bcoodinate::ValidBinaryCoordinate;
 use crate::error::Result;
 pub mod brandom;
 pub mod bstrategy_utils;
+pub mod bmedium;
 
 pub trait BinaryStrategy {
     /// Returns the next move of a strategy

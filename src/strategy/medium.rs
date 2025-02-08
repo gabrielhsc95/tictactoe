@@ -21,8 +21,7 @@ impl Strategy for MediumStrategy {
         match win_move {
             Some(w) => ValidCoordinate::from(&w, board),
             None => {
-                let options: Vec<ValidCoordinate> = board.get_empty_elements();
-                let random_coordinate: Option<&ValidCoordinate> = options.choose(&mut rng);
+                let random_coordinate: Option<&ValidCoordinate> = empty_elements.choose(&mut rng);
                 match random_coordinate {
                     Some(coordinate) => Ok(coordinate.clone()),
                     None => Err(Error::StrategyInvalidMove(String::from(
