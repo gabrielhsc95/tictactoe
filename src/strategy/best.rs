@@ -91,15 +91,10 @@ impl BestStrategy {
                     // but also (first_play.0, opposite_first_play_1),
                     // so we can play there
                     return ValidCoordinate::new(first_play.0, opposite_first_play_1, board);
-                } else if board.matrix[1][opposite_first_play_0].is_none()
-                    && board.matrix[first_play.1][opposite_first_play_0].is_none()
-                {
-                    // if blocked then the other adjacent is (opposite_first_play_0, first_play.1),
-                    // but we still need to check that corner, which is (opposite_first_play_0, first_play.1)
-                    return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
                 } else {
-                    let valid_corners = board.get_empty_corners();
-                    return utils::random_move(valid_corners, rng);
+                    // if blocked then the other adjacent is (opposite_first_play_0, first_play.1),
+                    // but we don't need to check that corner
+                    return ValidCoordinate::new(opposite_first_play_0, first_play.1, board);
                 }
             }
         } else if empty_elements.len() == 5 {
