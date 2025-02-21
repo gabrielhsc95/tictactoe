@@ -172,8 +172,8 @@ impl BestStrategy {
                         Some(player) => player == Player::O,
                         None => false,
                     };
+                    let empty_corners = board.get_empty_corners();
                     if has_middle {
-                        let empty_corners = board.get_empty_corners();
                         if empty_corners.len() == 2 {
                             let empty_edges = board.get_empty_edges();
                             utils::random_move(empty_edges, rng)
@@ -189,7 +189,6 @@ impl BestStrategy {
                             unreachable!("There should be an available corner at this point!");
                         }
                     } else {
-                        let empty_corners = board.get_empty_corners();
                         utils::random_move(empty_corners, rng)
                     }
                 }

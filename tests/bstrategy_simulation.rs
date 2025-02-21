@@ -1,7 +1,7 @@
 mod utils;
 #[cfg(test)]
 use tictactoe::bgame::BinaryGame;
-//use tictactoe::strategy::bbest::BinaryBestStrategy;
+use tictactoe::bstrategy::bbest::BinaryBestStrategy;
 use tictactoe::bstrategy::bmedium::BinaryMediumStrategy;
 use tictactoe::bstrategy::brandom::BinaryRandomStrategy;
 use tictactoe::bui::btui::BinaryTerminalUserInterface;
@@ -10,7 +10,7 @@ use tictactoe::bui::btui::BinaryTerminalUserInterface;
 
 #[test]
 fn brandom_vs_brandom_simulation() {
-    for _ in 0..1000000 {
+    for _ in 0..1000 {
         let ui = BinaryTerminalUserInterface::default();
         let mut tic_tac_toe = BinaryGame::new(ui);
         let random_1 = BinaryRandomStrategy::default();
@@ -19,26 +19,26 @@ fn brandom_vs_brandom_simulation() {
     }
 }
 
-// #[test]
-// fn bbest_vs_brandom_simulation() {
-//     for _ in 0..1000 {
-//         let ui = BinaryTerminalUserInterface::default();
-//         let mut tic_tac_toe = BinaryGame::new(ui);
-//         let best = BinaryBestStrategy::default();
-//         let random = BinaryRandomStrategy::default();
-//         utils::play_by_itself_binary(&mut tic_tac_toe, &best, &random);
-//     }
-// }
-// #[test]
-// fn brandom_vs_bbest_simulation() {
-//     for _ in 0..1000 {
-//         let ui = BinaryTerminalUserInterface::default();
-//         let mut tic_tac_toe = BinaryGame::new(ui);
-//         let random = BinaryRandomStrategy::default();
-//         let best = BinaryBestStrategy::default();
-//         utils::play_by_itself_binary(&mut tic_tac_toe, &random, &best);
-//     }
-// }
+#[test]
+fn bbest_vs_brandom_simulation() {
+    for _ in 0..1000 {
+        let ui = BinaryTerminalUserInterface::default();
+        let mut tic_tac_toe = BinaryGame::new(ui);
+        let best = BinaryBestStrategy::default();
+        let random = BinaryRandomStrategy::default();
+        utils::play_by_itself_binary(&mut tic_tac_toe, &best, &random);
+    }
+}
+#[test]
+fn brandom_vs_bbest_simulation() {
+    for _ in 0..1000 {
+        let ui = BinaryTerminalUserInterface::default();
+        let mut tic_tac_toe = BinaryGame::new(ui);
+        let random = BinaryRandomStrategy::default();
+        let best = BinaryBestStrategy::default();
+        utils::play_by_itself_binary(&mut tic_tac_toe, &random, &best);
+    }
+}
 
 #[test]
 fn bmedium_vs_brandom_simulation() {

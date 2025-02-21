@@ -50,3 +50,23 @@ pub fn get_empty_elements(board: u32) -> Vec<u8> {
     }
     empty_elements
 }
+
+pub fn get_empty_corners(board: u32) -> Vec<u8> {
+    let mut empty_corners: Vec<u8> = Vec::new();
+    for p in [0, 2, 6, 8] {
+        if identify_position_state(p, board) == ' ' {
+            empty_corners.push(p);
+        }
+    }
+    empty_corners
+}
+
+pub fn get_empty_edges(board: u32) -> Vec<u8> {
+    let mut empty_corners: Vec<u8> = Vec::new();
+    for p in [1, 3, 5, 7] {
+        if identify_position_state(p, board) == ' ' {
+            empty_corners.push(p);
+        }
+    }
+    empty_corners
+}

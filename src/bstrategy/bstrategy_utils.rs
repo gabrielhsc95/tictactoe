@@ -1,4 +1,5 @@
 use crate::bcoodinate::{BinaryCoordinate, ValidBinaryCoordinate};
+use crate::butils;
 use crate::error::{Error, Result};
 use rand::prelude::*;
 
@@ -16,44 +17,39 @@ pub fn random_move(
     }
 }
 
-fn brian_kernighan(mut masked_board: u32) -> u8 {
-    let mut counter: u8 = 0;
-    while masked_board != 0 {
-        masked_board = masked_board & (masked_board - 1);
-        counter += 1;
-    }
-    counter
-
-}
-
-fn get_missing_position(positions: [u8; 3], masked_board: u32) -> u8 {
-    for p in positions {
-        if masked_board & (0b11 << (p << 1)) == 0 {
-            return p
-        }
-    }
-    unreachable!("It should not be here!")
-}
-
-
-pub fn win_move_for_player(board: u32, player: bool) -> Option<BinaryCoordinate>{
-    let winning_conditions: [([u8; 3], u32); 8] = [
-        ([0, 1, 2], 0b000000000000111111),
-        ([3, 4, 5], 0b000000111111000000),
-        ([6, 7, 8], 0b111111000000000000),
-        ([2, 5, 8], 0b110000110000110000),
-        ([1, 4, 7], 0b001100001100001100),
-        ([0, 3, 6], 0b000011000011000011),
-        ([0, 4, 8], 0b110000001100000011),
-        ([2, 4, 6], 0b000011001100110000),
+pub fn win_move_for_player(board: u32, player: bool) -> Option<BinaryCoordinate> {
+    let winning_conditions: [[u8; 3]; 8] = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [2, 5, 8],
+        [1, 4, 7],
+        [0, 3, 6],
+        [0, 4, 8],
+        [2, 4, 6],
     ];
-    for (positions, wc) in winning_conditions{
-        let masked_board = board & wc ;
-        if brian_kernighan(masked_board) == 2 {
-            return Some(BinaryCoordinate{
-                position: get_missing_position(positions, masked_board),
-                player
-            })
+    for positions in winning_conditions {
+        let v1 = butils::identify_position_state(positions[0], board);
+        let v2 = butils::identify_position_state(positions[1], board);
+        let v3 = butils::identify_position_state(positions[2], board);
+        let player_char: char = if player { 'x' } else { 'o' };
+        if v1 == ' ' && v2 == v3 && v2 == player_char {
+            return Some(BinaryCoordinate {
+                position: positions[0],
+                player,
+            });
+        }
+        if v2 == ' ' && v1 == v3 && v1 == player_char {
+            return Some(BinaryCoordinate {
+                position: positions[1],
+                player,
+            });
+        }
+        if v3 == ' ' && v1 == v2 && v1 == player_char {
+            return Some(BinaryCoordinate {
+                position: positions[2],
+                player,
+            });
         }
     }
     None

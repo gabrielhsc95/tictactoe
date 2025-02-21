@@ -7,7 +7,7 @@ use rand::prelude::*;
 
 pub struct BinaryMediumStrategy {}
 
-impl BinaryStrategy for BinaryMediumStrategy{
+impl BinaryStrategy for BinaryMediumStrategy {
     fn get_move(&self, player: bool, board: u32) -> Result<ValidBinaryCoordinate> {
         let win_move = bstrategy_utils::win_move_for_player(board, player);
         match win_move {

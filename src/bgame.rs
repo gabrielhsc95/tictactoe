@@ -124,4 +124,12 @@ impl<T: BinaryUserInterface> BinaryGame<T> {
         self.turn += 1;
         self.won = self.check_win_conditions();
     }
+
+    pub fn get_current_player(&self) -> bool {
+        if self.turn % 2 == 0 {
+            false
+        } else {
+            true
+        }
+    }
 }
